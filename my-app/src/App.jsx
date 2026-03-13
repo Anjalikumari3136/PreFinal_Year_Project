@@ -25,6 +25,9 @@ import FacultyManagement from './pages/admin/FacultyManagement';
 import FeedbackManagement from './pages/admin/FeedbackManagement';
 import Mentorship from './pages/dashboard/Mentorship';
 import MentorshipManagement from './pages/admin/MentorshipManagement';
+import FeaturesPage from './pages/Features';
+import AboutPage from './pages/About';
+import ContactPage from './pages/Contact';
 
 const RoleProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
@@ -116,6 +119,9 @@ function App() {
               <Route path="students" element={<Navigate to="/faculty-dashboard" />} />
               <Route path="courses" element={<Navigate to="/faculty-dashboard/resources" />} />
             </Route>
+            <Route path="/features" element={<FeaturesPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
           </Routes>
         </NotificationProvider>
       </Router>

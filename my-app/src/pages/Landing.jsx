@@ -28,10 +28,10 @@ import {
 } from 'lucide-react';
 
 const backgroundImages = [
-    "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070&auto=format&fit=crop", // Graduation
-    "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop", // Library
-    "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop", // Campus
-    "https://images.unsplash.com/photo-1524178232363-1fb28f74b671?q=80&w=2070&auto=format&fit=crop", // Classroom
+    "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop", // Modern diverse students collaborating
+    "https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?q=80&w=2070&auto=format&fit=crop", // Premium university architecture/library
+    "https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop", // Joyful graduation / success
+    "https://images.unsplash.com/photo-1562774053-701939374585?q=80&w=2086&auto=format&fit=crop", // Modern aesthetic campus area
 ];
 
 const Landing = () => {
@@ -107,8 +107,8 @@ const Landing = () => {
                             backgroundImage: `url(${backgroundImages[currentBg]})`,
                         }}
                     >
-                        {/* Light Overlay for Visibility */}
-                        <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px]" />
+                        {/* Gradient overlay: Solid white on left for text readability, fading to transparent on right */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent backdrop-blur-[2px]" />
                     </motion.div>
                 </AnimatePresence>
             </div>

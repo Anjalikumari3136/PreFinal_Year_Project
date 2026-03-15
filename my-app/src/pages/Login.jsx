@@ -35,42 +35,50 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-slate-100 p-6 font-sans">
-            <Link to="/" className="fixed top-8 left-8 flex items-center gap-2 text-slate-400 hover:text-slate-600 transition-colors font-bold uppercase tracking-widest text-xs">
+        <div className="min-h-screen flex items-center justify-center bg-white relative overflow-hidden font-sans">
+            {/* Decorative Background Pattern */}
+            <div className="absolute inset-0 overflow-hidden">
+                <div className="absolute -top-16 -left-16 w-72 h-72 rounded-full bg-indigo-100/40 blur-3xl" />
+                <div className="absolute -bottom-16 -right-16 w-80 h-80 rounded-full bg-fuchsia-100/40 blur-3xl" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.75),transparent_65%)]" />
+            </div>
+
+            <Link to="/" className="fixed top-8 left-8 flex items-center gap-2 text-white/80 hover:text-white transition-colors font-bold uppercase tracking-widest text-xs">
                 <ArrowLeft className="h-4 w-4" /> HOME
             </Link>
 
             <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="w-full max-w-lg bg-white rounded-[3rem] shadow-2xl p-10 md:p-14 relative"
+                className="w-full max-w-sm bg-white border border-slate-200 rounded-[2.5rem] shadow-2xl p-6 md:p-8 relative"
             >
                 {/* Logo Area */}
-                <div className="flex flex-col items-center mb-10">
-                    <div className="w-24 h-24 rounded-full border border-orange-200 p-1 flex items-center justify-center bg-white shadow-lg mb-6">
+                <div className="flex flex-col items-center mb-6">
+                    <div className="w-20 h-20 rounded-full border border-orange-200 p-1 flex items-center justify-center bg-white shadow-lg mb-5">
                         <div className="w-full h-full rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white shadow-inner">
                             <div className="bg-white p-2 rounded-full">
-                                <GraduationCap className="h-10 w-10 text-orange-600" />
+                                <GraduationCap className="h-8 w-8 text-orange-600" />
                             </div>
                         </div>
                     </div>
-                    <h1 className="text-4xl font-black text-slate-900 tracking-tighter">PORTAL LOGIN</h1>
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tighter">PORTAL LOGIN</h1>
                 </div>
 
                 {/* Role Selection Icons */}
-                <div className="flex justify-center gap-6 mb-8">
+                <div className="flex justify-center gap-4 mb-6">
                     {roles.map((r) => (
-                        <div key={r.id} className="flex flex-col items-center gap-3">
+                        <div key={r.id} className="flex flex-col items-center gap-2">
                             <button
                                 onClick={() => setRole(r.id)}
-                                className={`w-20 h-20 rounded-[1.5rem] flex items-center justify-center transition-all duration-300 ${role === r.id
+                                className={`w-16 h-16 rounded-[1.5rem] flex items-center justify-center transition-all duration-300 ${role === r.id
                                     ? 'bg-white border-4 border-orange-500 shadow-xl scale-110'
-                                    : 'bg-slate-50 border-2 border-slate-100 hover:border-slate-200 opacity-60'
+                                    : 'bg-slate-50 border border-slate-200 hover:bg-slate-100'
                                     }`}
                             >
-                                <r.icon className={`h-10 w-10 ${role === r.id ? 'text-slate-800' : 'text-slate-400'}`} />
+                                <r.icon className={`h-8 w-8 ${role === r.id ? 'text-orange-500' : 'text-slate-400'}`} />
                             </button>
-                            <span className={`text-[11px] font-black tracking-widest ${role === r.id ? 'text-orange-500' : 'text-slate-300'}`}>
+                            <span className={`text-[10px] font-black tracking-widest ${role === r.id ? 'text-orange-600' : 'text-slate-500'}`}>
+
                                 {r.label}
                             </span>
                         </div>
@@ -78,18 +86,19 @@ const Login = () => {
                 </div>
 
                 {/* Dynamic Sign-In Text */}
-                <div className="text-center mb-10">
-                    <p className="text-sm font-black text-slate-400 uppercase tracking-widest">
-                        SIGN IN AS <span className="text-orange-500">{currentRoleLabel}</span>
-                    </p>
+                <div className="text-center mb-6">
+                        <p className="text-sm font-black text-slate-700 uppercase tracking-widest">
+                            SIGN IN AS <span className="text-orange-600">{currentRoleLabel}</span>
+                        </p>
                 </div>
 
                 {/* Form Fields */}
                 <form onSubmit={handleLogin} className="space-y-6">
                     <div className="relative">
+                        <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" />
                         <input
                             type="email"
-                            className="w-full px-8 py-5 bg-slate-50 border-none rounded-[2rem] focus:outline-none focus:ring-4 focus:ring-slate-100 transition-all font-bold text-slate-700 placeholder:text-slate-300"
+                            className="w-full pl-14 pr-6 py-5 bg-slate-50 border border-slate-200 rounded-[2rem] focus:outline-none focus:ring-4 focus:ring-orange-500/20 transition-all font-bold text-slate-900 placeholder:text-slate-400"
                             placeholder="Email Address"
                             value={formData.email}
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -98,10 +107,12 @@ const Login = () => {
                     </div>
 
                     <div className="relative">
+                        <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" />
                         <input
                             type="password"
-                            className="w-full px-8 py-5 bg-slate-50 border-none rounded-[2rem] focus:outline-none focus:ring-4 focus:ring-slate-100 transition-all font-bold text-slate-700 placeholder:text-slate-300"
+                            className="w-full pl-14 pr-6 py-5 bg-slate-50 border border-slate-200 rounded-[2rem] focus:outline-none focus:ring-4 focus:ring-orange-500/20 transition-all font-bold text-slate-900 placeholder:text-slate-400"
                             placeholder="Password"
+
                             value={formData.password}
                             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                             required
@@ -111,23 +122,23 @@ const Login = () => {
                     <Button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full py-6 text-xl bg-gradient-to-r from-orange-500 to-black hover:opacity-90 transition-all font-black rounded-[2rem] shadow-xl text-white tracking-widest mt-4 uppercase"
+                        className="w-full py-5 text-lg bg-gradient-to-r from-orange-500 to-black hover:opacity-90 transition-all font-black rounded-[2rem] shadow-xl text-white tracking-widest mt-3 uppercase"
                     >
                         {isLoading ? <Loader2 className="h-6 w-6 animate-spin mx-auto" /> : 'SIGN IN NOW'}
                     </Button>
                 </form>
 
-                <div className="mt-12 flex items-center justify-between px-2">
-                    <Link to="/register" className="text-xs font-black text-slate-500 hover:text-slate-800 transition-colors uppercase tracking-widest">
+                <div className="mt-10 flex items-center justify-between px-2">
+                    <Link to="/register" className="text-[11px] font-black text-slate-500 hover:text-slate-800 transition-colors uppercase tracking-widest">
                         NEW {currentRoleLabel}? REGISTER
                     </Link>
-                    <button className="text-xs font-black text-slate-500 hover:text-slate-800 transition-colors uppercase tracking-widest">
+                    <button className="text-[11px] font-black text-slate-500 hover:text-slate-800 transition-colors uppercase tracking-widest">
                         FORGOT PASSWORD?
                     </button>
                 </div>
 
-                <div className="mt-16 text-center">
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                <div className="mt-10 text-center">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                         Secure login powered by CampusConnect
                     </p>
                 </div>

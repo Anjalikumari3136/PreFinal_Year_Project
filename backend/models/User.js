@@ -27,6 +27,9 @@ const UserSchema = new mongoose.Schema({
         enum: ['Course Instructor', 'Mentor', 'Counselor', 'Request Approver']
     }],
     workloadScore: { type: Number, default: 0 },
+    otp: { type: String },
+    otpExpires: { type: Date },
+    isVerified: { type: Boolean, default: false },
     profileDetails: {
         bio: String,
         contactNumber: String,

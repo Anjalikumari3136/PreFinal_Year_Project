@@ -38,6 +38,23 @@ const updateRequestStatus = async (req, res) => {
                 sender: req.user._id,
                 isGeneral: false
             });
+            
+            // Also send email notification
+            import('../models/User.js').then(async (userModule) => {
+                const User = userModule.default;
+                const student = await User.findById(request.student);
+                if (student && student.email) {
+                    import('../utils/sendEmail.js').then((emailModule) => {
+                        const sendEmail = emailModule.default;
+                        sendEmail({
+                            email: student.email,
+                            name: student.name,
+                            subject: 'Request Status Updated',
+                            htmlContent: `<p>Hi ${student.name},</p><p>Your request titled "<b>${request.title || 'a request'}</b>" has been updated to status: <b>${status}</b>.</p>${request.resolutionNotes ? `<p>Notes: ${request.resolutionNotes}</p>` : ''}<p>Thank you,<br/>Campus Connect Admin</p>`
+                        });
+                    });
+                }
+            });
 
             res.json(updatedRequest);
         } else {

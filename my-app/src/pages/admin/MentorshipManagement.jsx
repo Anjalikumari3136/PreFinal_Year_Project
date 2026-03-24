@@ -45,8 +45,8 @@ const MentorshipManagement = () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
             const [reqRes, facRes] = await Promise.all([
-                axios.get('http://localhost:5000/api/mentorship/admin/requests', config),
-                axios.get('http://localhost:5000/api/admin/faculty', config)
+                axios.get('https://prefinal-year-project.onrender.com/api/mentorship/admin/requests', config),
+                axios.get('https://prefinal-year-project.onrender.com/api/admin/faculty', config)
             ]);
             setRequests(reqRes.data);
             setFacultyList(facRes.data);
@@ -78,7 +78,7 @@ const MentorshipManagement = () => {
                 }
             };
 
-            await axios.put(`http://localhost:5000/api/mentorship/admin/schedule/${selectedRequest._id}`, meetingData, config);
+            await axios.put(`https://prefinal-year-project.onrender.com/api/mentorship/admin/schedule/${selectedRequest._id}`, meetingData, config);
 
             toast.success('Meeting scheduled and mentor assigned!');
             setSelectedRequest(null);
@@ -102,7 +102,7 @@ const MentorshipManagement = () => {
         setSubmitting(true);
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.put(`http://localhost:5000/api/mentorship/admin/status/${selectedRequest._id}`, {
+            await axios.put(`https://prefinal-year-project.onrender.com/api/mentorship/admin/status/${selectedRequest._id}`, {
                 status: 'REJECTED',
                 adminResponse: meetingData.adminResponse
             }, config);
@@ -119,7 +119,7 @@ const MentorshipManagement = () => {
         setSubmitting(true);
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.put(`http://localhost:5000/api/mentorship/admin/schedule/${selectedRequest._id}`, {
+            await axios.put(`https://prefinal-year-project.onrender.com/api/mentorship/admin/schedule/${selectedRequest._id}`, {
                 mentorId: meetingData.mentorId || selectedRequest.mentor._id,
                 adminResponse: meetingData.adminResponse
             }, config);

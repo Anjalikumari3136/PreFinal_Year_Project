@@ -90,7 +90,7 @@ const Requests = () => {
                     Authorization: `Bearer ${user.token}`,
                 },
             };
-            const { data } = await axios.get('http://localhost:5000/api/requests', config);
+            const { data } = await axios.get('https://prefinal-year-project.onrender.com/api/requests', config);
             setRequests(data);
         } catch (error) {
             console.error('Error fetching requests', error);

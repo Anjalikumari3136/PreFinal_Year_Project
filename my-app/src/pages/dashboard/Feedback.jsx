@@ -19,7 +19,7 @@ const Feedback = () => {
         setLoading(true);
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get('http://localhost:5000/api/feedback', config);
+            const { data } = await axios.get('https://prefinal-year-project.onrender.com/api/feedback', config);
             setFeedbacks(data);
         } catch (error) {
             toast.error('Failed to load feedback history');
@@ -37,7 +37,7 @@ const Feedback = () => {
         setSubmitting(true);
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.post('http://localhost:5000/api/feedback', formData, config);
+            await axios.post('https://prefinal-year-project.onrender.com/api/feedback', formData, config);
             toast.success('Feedback submitted successfully');
             setShowForm(false);
             setFormData({ title: '', description: '', category: 'Other' });

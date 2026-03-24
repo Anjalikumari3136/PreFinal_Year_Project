@@ -39,13 +39,13 @@ const AdminOverview = () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
             const [statsRes, logRes, userRes, facRes, reqRes, feedRes, mentorRes] = await Promise.all([
-                axios.get('http://localhost:5000/api/admin/stats', config),
-                axios.get('http://localhost:5000/api/admin/audit-logs', config),
-                axios.get('http://localhost:5000/api/admin/students?limit=5', config),
-                axios.get('http://localhost:5000/api/admin/faculty', config),
-                axios.get('http://localhost:5000/api/admin/requests', config),
-                axios.get('http://localhost:5000/api/admin/feedback', config),
-                axios.get('http://localhost:5000/api/mentorship/admin/requests', config)
+                axios.get('https://prefinal-year-project.onrender.com/api/admin/stats', config),
+                axios.get('https://prefinal-year-project.onrender.com/api/admin/audit-logs', config),
+                axios.get('https://prefinal-year-project.onrender.com/api/admin/students?limit=5', config),
+                axios.get('https://prefinal-year-project.onrender.com/api/admin/faculty', config),
+                axios.get('https://prefinal-year-project.onrender.com/api/admin/requests', config),
+                axios.get('https://prefinal-year-project.onrender.com/api/admin/feedback', config),
+                axios.get('https://prefinal-year-project.onrender.com/api/mentorship/admin/requests', config)
             ]);
 
             setStats(statsRes.data);

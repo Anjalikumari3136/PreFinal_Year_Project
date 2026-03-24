@@ -28,7 +28,7 @@ const NewRequestModal = ({ isOpen, onClose, onCreated }) => {
                 },
             };
 
-            await axios.post('http://localhost:5000/api/requests', formData, config);
+            await axios.post('https://prefinal-year-project.onrender.com/api/requests', formData, config);
 
             toast.success('Request submitted successfully!', { id: loadingToast });
             if (onCreated) onCreated(); 

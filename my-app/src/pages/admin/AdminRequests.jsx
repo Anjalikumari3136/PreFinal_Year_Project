@@ -22,7 +22,7 @@ const AdminRequests = () => {
         setLoading(true);
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get('http://localhost:5000/api/admin/requests', config);
+            const { data } = await axios.get('https://prefinal-year-project.onrender.com/api/admin/requests', config);
             setRequests(data);
         } catch (error) {
             console.error(error);
@@ -35,7 +35,7 @@ const AdminRequests = () => {
     const fetchFaculty = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get('http://localhost:5000/api/admin/faculty', config);
+            const { data } = await axios.get('https://prefinal-year-project.onrender.com/api/admin/faculty', config);
             setFaculty(data);
         } catch (error) {
             console.error(error);
@@ -69,7 +69,7 @@ const AdminRequests = () => {
 
             if (assigningTo) payload.assignedTo = assigningTo;
 
-            await axios.put(`http://localhost:5000/api/admin/requests/${selectedRequest._id}`, payload, config);
+            await axios.put(`https://prefinal-year-project.onrender.com/api/admin/requests/${selectedRequest._id}`, payload, config);
 
             toast.success(assigningTo ? `Request assigned to faculty` : `Request marked as ${status}`);
             setSelectedRequest(null);

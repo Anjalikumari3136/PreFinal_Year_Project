@@ -83,7 +83,7 @@ const Profile = () => {
             };
 
             const { data } = await axios.put(
-                'http://localhost:5000/api/users/profile',
+                'https://prefinal-year-project.onrender.com/api/users/profile',
                 updatePayload,
                 config
             );

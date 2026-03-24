@@ -17,7 +17,7 @@ const FeedbackManagement = () => {
     const fetchFeedbacks = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get('http://localhost:5000/api/admin/feedback', config);
+            const { data } = await axios.get('https://prefinal-year-project.onrender.com/api/admin/feedback', config);
             setFeedbacks(data);
         } catch (error) { toast.error('Failed to load feedback'); }
         finally { setLoading(false); }
@@ -30,7 +30,7 @@ const FeedbackManagement = () => {
         setUpdating(true);
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.put(`http://localhost:5000/api/admin/feedback/${selected._id}`, {
+            await axios.put(`https://prefinal-year-project.onrender.com/api/admin/feedback/${selected._id}`, {
                 status,
                 adminResponse
             }, config);

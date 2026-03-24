@@ -25,7 +25,7 @@ const Register = () => {
         e.preventDefault();
         setIsLoading(true);
         try {
-            await axios.post('http://localhost:5000/api/auth/register', formData);
+            await axios.post('https://prefinal-year-project.onrender.com/api/auth/register', formData);
             setShowOTP(true);
             alert('OTP sent to your email. Please check and verify.');
         } catch (error) {
@@ -38,7 +38,7 @@ const Register = () => {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/verify-otp', {
+            const res = await axios.post('https://prefinal-year-project.onrender.com/api/auth/verify-otp', {
                 email: formData.email,
                 otp
             });

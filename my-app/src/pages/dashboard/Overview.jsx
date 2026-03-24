@@ -49,9 +49,9 @@ const Overview = () => {
                 const config = { headers: { Authorization: `Bearer ${user.token}` } };
 
                 const [reqRes, profileRes, mentorRes] = await Promise.allSettled([
-                    axios.get('http://localhost:5000/api/requests', config),
-                    axios.get('http://localhost:5000/api/auth/profile', config),
-                    axios.get('http://localhost:5000/api/mentorship/my-requests', config)
+                    axios.get('https://prefinal-year-project.onrender.com/api/requests', config),
+                    axios.get('https://prefinal-year-project.onrender.com/api/auth/profile', config),
+                    axios.get('https://prefinal-year-project.onrender.com/api/mentorship/my-requests', config)
                 ]);
 
                 let pendingCount = 0;

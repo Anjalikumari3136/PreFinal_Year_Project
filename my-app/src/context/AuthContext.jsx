@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
             };
 
             const { data } = await axios.post(
-                'http://localhost:5000/api/auth/login',
+                'https://prefinal-year-project.onrender.com/api/auth/login',
                 { email, password },
                 config
             );

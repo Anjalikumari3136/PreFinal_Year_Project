@@ -44,8 +44,8 @@ const Mentorship = () => {
                 headers: { Authorization: `Bearer ${user.token}` }
             };
             const [facultyRes, requestsRes] = await Promise.all([
-                axios.get('http://localhost:5000/api/mentorship/faculty', config),
-                axios.get('http://localhost:5000/api/mentorship/my-requests', config)
+                axios.get('https://prefinal-year-project.onrender.com/api/mentorship/faculty', config),
+                axios.get('https://prefinal-year-project.onrender.com/api/mentorship/my-requests', config)
             ]);
             setFacultyList(facultyRes.data);
             setMyRequests(requestsRes.data);
@@ -66,7 +66,7 @@ const Mentorship = () => {
             const config = {
                 headers: { Authorization: `Bearer ${user.token}` }
             };
-            await axios.post('http://localhost:5000/api/mentorship/request', {
+            await axios.post('https://prefinal-year-project.onrender.com/api/mentorship/request', {
                 mentorId: selectedFaculty._id,
                 message: requestMessage
             }, config);

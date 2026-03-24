@@ -29,7 +29,7 @@ const FacultyOverview = () => {
     const fetchDashboard = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data: dashboardData } = await axios.get('http://localhost:5000/api/faculty/dashboard', config);
+            const { data: dashboardData } = await axios.get('https://prefinal-year-project.onrender.com/api/faculty/dashboard', config);
             setData(dashboardData);
         } catch (error) {
             console.error('Failed to load faculty dashboard', error);

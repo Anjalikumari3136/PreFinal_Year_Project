@@ -38,8 +38,8 @@ const FacultyManagement = () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
             const [facRes, workloadRes] = await Promise.all([
-                axios.get('http://localhost:5000/api/admin/faculty', config),
-                axios.get('http://localhost:5000/api/admin/faculty/workload', config)
+                axios.get('https://prefinal-year-project.onrender.com/api/admin/faculty', config),
+                axios.get('https://prefinal-year-project.onrender.com/api/admin/faculty/workload', config)
             ]);
             setFaculty(facRes.data);
             setWorkload(workloadRes.data);
@@ -72,7 +72,7 @@ const FacultyManagement = () => {
         e.preventDefault();
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.post('http://localhost:5000/api/admin/faculty', formData, config);
+            await axios.post('https://prefinal-year-project.onrender.com/api/admin/faculty', formData, config);
             toast.success('Faculty added successfully');
             setIsAddModalOpen(false);
             resetForm();
@@ -86,7 +86,7 @@ const FacultyManagement = () => {
         e.preventDefault();
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.put(`http://localhost:5000/api/admin/faculty/${selectedFaculty._id}`, formData, config);
+            await axios.put(`https://prefinal-year-project.onrender.com/api/admin/faculty/${selectedFaculty._id}`, formData, config);
             toast.success('Faculty updated successfully');
             setIsEditModalOpen(false);
             resetForm();
@@ -100,7 +100,7 @@ const FacultyManagement = () => {
         if (!window.confirm('Are you sure you want to remove this faculty member?')) return;
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.delete(`http://localhost:5000/api/admin/faculty/${id}`, config);
+            await axios.delete(`https://prefinal-year-project.onrender.com/api/admin/faculty/${id}`, config);
             toast.success('Faculty removed');
             fetchAll();
         } catch (error) {

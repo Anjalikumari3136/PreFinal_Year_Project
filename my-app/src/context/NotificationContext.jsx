@@ -14,7 +14,7 @@ export const NotificationProvider = ({ children }) => {
 
     useEffect(() => {
         if (user) {
-            const newSocket = io('http://localhost:5000');
+            const newSocket = io('https://prefinal-year-project.onrender.com');
             setSocket(newSocket);
 
             newSocket.emit('join', user._id);
@@ -41,7 +41,7 @@ export const NotificationProvider = ({ children }) => {
                     Authorization: `Bearer ${user.token}`,
                 },
             };
-            const { data } = await axios.get('http://localhost:5000/api/notifications', config);
+            const { data } = await axios.get('https://prefinal-year-project.onrender.com/api/notifications', config);
             setNotifications(data);
             const unread = data.filter(n => {
                 const recipient = n.recipients.find(r => r.user === user._id);
@@ -60,7 +60,7 @@ export const NotificationProvider = ({ children }) => {
                     Authorization: `Bearer ${user.token}`,
                 },
             };
-            await axios.put(`http://localhost:5000/api/notifications/${notificationId}/read`, {}, config);
+            await axios.put(`https://prefinal-year-project.onrender.com/api/notifications/${notificationId}/read`, {}, config);
 
             setNotifications(prev => prev.map(n =>
                 n._id === notificationId ? { ...n, recipients: n.recipients.map(r => r.user === user._id ? { ...r, isRead: true } : r) } : n

@@ -1,5 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
+import toast from 'react-hot-toast';
+import API_BASE_URL from '../config/api';
 
 const AuthContext = createContext(null);
 
@@ -8,7 +10,7 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const userInfo = localStorage.getItem('userInfo');
+        const userInfo = sessionStorage.getItem('userInfo');
         if (userInfo) {
             setUser(JSON.parse(userInfo));
         }
@@ -24,13 +26,13 @@ export const AuthProvider = ({ children }) => {
             };
 
             const { data } = await axios.post(
-                'https://prefinal-year-project.onrender.com/api/auth/login',
+                `${API_BASE_URL}/api/auth/login`,
                 { email, password },
                 config
             );
 
             setUser(data);
-            localStorage.setItem('userInfo', JSON.stringify(data));
+            sessionStorage.setItem('userInfo', JSON.stringify(data));
             return { success: true, role: data.role };
         } catch (error) {
             return {
@@ -43,7 +45,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = () => {
-        localStorage.removeItem('userInfo');
+        sessionStorage.removeItem('userInfo');
         setUser(null);
         window.location.href = '/';
     };
@@ -51,7 +53,7 @@ export const AuthProvider = ({ children }) => {
     const updateUserData = (newData) => {
         const updatedUser = { ...user, ...newData };
         setUser(updatedUser);
-        localStorage.setItem('userInfo', JSON.stringify(updatedUser));
+        sessionStorage.setItem('userInfo', JSON.stringify(updatedUser));
     };
 
     return (

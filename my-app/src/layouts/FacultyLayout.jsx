@@ -11,7 +11,12 @@ import {
     User,
     LogOut,
     Menu,
-    ChevronRight
+    ChevronRight,
+    ArrowRight,
+    Users,
+    MessageSquare,
+    GraduationCap,
+    Shield
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -20,69 +25,84 @@ const FacultySidebar = ({ isOpen, setIsOpen }) => {
     const { logout } = useAuth();
 
     const menuItems = [
-        { icon: LayoutDashboard, label: 'Dashboard', path: '/faculty-dashboard' },
-        { icon: CalendarCheck, label: 'Attendance', path: '/faculty-dashboard/attendance' },
-        { icon: LineChart, label: 'Academic Performance', path: '/faculty-dashboard/performance' },
+        { icon: LayoutDashboard, label: 'Overview', path: '/faculty-dashboard' },
+        { icon: Users, label: 'Mentee List', path: '/faculty-dashboard/mentorship' },
+        { icon: MessageSquare, label: 'Grievance Desk', path: '/faculty-dashboard/grievances' },
+        { icon: CalendarCheck, label: 'Attendance Management', path: '/faculty-dashboard/attendance' },
+        { icon: LineChart, label: 'Academic Stats', path: '/faculty-dashboard/performance' },
         { icon: BookOpen, label: 'Study Resources', path: '/faculty-dashboard/resources' },
-        { icon: UserCheck, label: 'My Attendance', path: '/faculty-dashboard/my-attendance' },
-        { icon: Bell, label: 'Notice Board', path: '/faculty-dashboard/notice' },
+        { icon: Bell, label: 'Notices', path: '/faculty-dashboard/notice' },
         { icon: User, label: 'My Profile', path: '/faculty-dashboard/profile' },
     ];
 
     return (
-        <aside
-            className={cn(
-                "fixed md:static inset-y-0 left-0 z-50 w-[230px] bg-[#0d5446] transform transition-transform duration-200 ease-in-out md:transform-none flex flex-col shadow-2xl",
-                isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-            )}
-        >
-            <div className="p-5 mb-2">
-                <div className="bg-white rounded-xl p-2.5 flex items-center gap-2 shadow-lg border-2 border-[#1abc9c]">
-                    <div className="h-9 w-9 bg-white rounded-full border-2 border-[#1abc9c] flex items-center justify-center shrink-0">
-                        <span className="text-[#1abc9c] font-black text-xl">C</span>
-                    </div>
-                    <div className="flex flex-col leading-none">
-                        <span className="text-slate-900 font-black text-sm tracking-tight">CampusConnect</span>
-                        <div className="flex items-center gap-1 mt-0.5">
-                            <span className="bg-[#1abc9c] text-white text-[7px] font-black px-1 py-0.5 rounded-sm">FACULTY</span>
-                            <span className="text-slate-500 font-bold text-[7px]">PORTAL</span>
+        <>
+            <div
+                className={cn(
+                    "fixed inset-0 bg-black/60 z-40 transition-opacity md:hidden backdrop-blur-sm",
+                    isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+                )}
+                onClick={() => setIsOpen(false)}
+            />
+
+            <aside
+                className={cn(
+                    "fixed md:static inset-y-0 left-0 z-50 w-72 bg-[#171317] flex flex-col text-white shadow-2xl overflow-hidden transition-transform duration-300 ease-in-out font-sans",
+                    isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+                )}
+            >
+                <div className="p-8 pb-4">
+                    <div className="flex items-center gap-4 bg-white/5 p-4 rounded-[2rem] border border-white/5 shadow-2xl relative overflow-hidden group">
+                        <div className="absolute inset-0 bg-gradient-to-br from-orange-600/10 to-transparent"></div>
+                        <div className="h-12 w-12 rounded-2xl bg-orange-600 flex items-center justify-center shadow-lg shadow-orange-600/20 relative z-10">
+                            <GraduationCap className="h-6 w-6 text-white" />
+                        </div>
+                        <div className="relative z-10 leading-none">
+                            <p className="text-xl font-black text-white tracking-widest uppercase">Faculty</p>
+                            <p className="text-[10px] font-black text-orange-500 uppercase tracking-widest mt-1 opacity-80">Mentor Console</p>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <nav className="flex-1 px-3 space-y-0.5">
-                {menuItems.map((item) => {
-                    const isActive = location.pathname === item.path;
-                    return (
-                        <Link
-                            key={item.label}
-                            to={item.path}
-                            className={cn(
-                                "flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all font-bold text-[13px] relative",
-                                isActive
-                                    ? "bg-[#1abc9c] text-white shadow-lg"
-                                    : "text-white/80 hover:bg-white/5 hover:text-white"
-                            )}
+                <nav className="flex-1 px-5 py-8 space-y-3 overflow-y-auto custom-scrollbar">
+                    {menuItems.map((item) => {
+                        const isActive = location.pathname === item.path;
+                        return (
+                            <Link
+                                key={item.label}
+                                to={item.path}
+                                className={cn(
+                                    "flex items-center justify-between px-5 py-4 rounded-[1.5rem] text-sm font-bold transition-all group relative overflow-hidden",
+                                    isActive
+                                        ? "bg-[#f4511e] text-white ring-2 ring-white/10 shadow-xl shadow-orange-900/40"
+                                        : "text-slate-400 hover:bg-white/5 hover:text-white"
+                                )}
+                            >
+                                <div className="flex items-center gap-4 relative z-10">
+                                    <item.icon className={cn("h-5 w-5 transition-colors", isActive ? "text-white" : "text-orange-600 group-hover:text-white")} />
+                                    {item.label}
+                                </div>
+                                {isActive && <ArrowRight className="h-4 w-4 text-white relative z-10" />}
+                            </Link>
+                        );
+                    })}
+                </nav>
+
+                <div className="px-6 pb-10 mt-auto">
+                    <div className="bg-[#2d1b18] rounded-[2rem] p-6 border border-white/5 shadow-2xl relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-orange-600/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
+                        <p className="text-[10px] font-black text-orange-400 uppercase tracking-[0.2em] mb-4 relative z-10">End Session</p>
+                        <button
+                            onClick={logout}
+                            className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl text-sm font-black text-white bg-[#ef5350] hover:bg-[#d32f2f] transition-all shadow-lg active:scale-95 relative z-10"
                         >
-                            <item.icon className={cn("h-[18px] w-[18px]", isActive ? "text-white" : "text-white/70")} />
-                            <span>{item.label}</span>
-                            {isActive && <ChevronRight className="h-4 w-4 ml-auto" />}
-                        </Link>
-                    );
-                })}
-            </nav>
-
-            <div className="p-3 pb-5">
-                <button
-                    onClick={logout}
-                    className="flex items-center gap-3 px-4 py-3.5 w-full rounded-xl text-[13px] font-black text-red-400 bg-red-500/10 hover:bg-red-500 hover:text-white transition-all uppercase tracking-wide"
-                >
-                    <LogOut className="h-[18px] w-[18px]" />
-                    Terminate Session
-                </button>
-            </div>
-        </aside>
+                            <LogOut className="h-5 w-5" />
+                            Sign Out
+                        </button>
+                    </div>
+                </div>
+            </aside>
+        </>
     );
 };
 
@@ -91,35 +111,44 @@ const FacultyLayout = () => {
     const { user } = useAuth();
 
     return (
-        <div className="min-h-screen bg-[#f5f7fa] flex font-sans text-slate-900">
+        <div className="min-h-screen bg-[#f8f9fa] flex font-sans text-slate-900">
             <FacultySidebar isOpen={isSidebarOpen} setIsOpen={setSidebarOpen} />
 
-            <main className="flex-1 flex flex-col min-w-0 h-screen">
-                <header className="h-[72px] flex items-center justify-between px-10 shrink-0 bg-white/50 backdrop-blur-sm border-b border-slate-100">
-                    <button
-                        className="lg:hidden p-2 text-[#0d5446] hover:bg-slate-50 rounded-lg"
-                        onClick={() => setSidebarOpen(true)}
-                    >
-                        <Menu className="h-6 w-6" />
-                    </button>
-
-                    <h2 className="text-2xl font-black text-slate-900">Overview</h2>
+            <main className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+                <header className="h-[96px] flex items-center justify-between px-8 lg:px-12 bg-white/50 backdrop-blur-md border-b border-slate-100 relative z-30">
+                    <div className="flex items-center gap-6">
+                        <button
+                            className="md:hidden p-3 text-slate-500 hover:bg-white rounded-2xl shadow-sm border border-slate-200"
+                            onClick={() => setSidebarOpen(true)}
+                        >
+                            <Menu className="h-6 w-6" />
+                        </button>
+                        <div>
+                            <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight leading-none uppercase">Academic Bureau</h2>
+                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1.5 opacity-80">Faculty Management Terminal</p>
+                        </div>
+                    </div>
 
                     <div className="flex items-center gap-4">
-                        <div className="bg-white px-5 py-2.5 rounded-2xl flex items-center gap-3 border border-slate-200 shadow-sm">
-                            <div className="w-9 h-9 rounded-full bg-[#1abc9c]/20 text-[#1abc9c] flex items-center justify-center font-black text-base border-2 border-[#1abc9c]/30">
-                                {user?.name?.charAt(0) || 'P'}
-                            </div>
-                            <div className="text-right">
-                                <p className="text-sm font-black text-slate-900 leading-none">{user?.name || 'Preveen Sir'}</p>
-                                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Expert Educator</p>
-                            </div>
+                    <div className="flex items-center gap-4 bg-white p-1.5 pr-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-lg transition-all cursor-pointer group">
+                             <div className="h-10 w-10 rounded-xl bg-[#171317] flex items-center justify-center text-white font-bold text-sm shadow-lg transition-transform group-hover:rotate-3">
+                                 {user?.name?.charAt(0) || 'F'}
+                             </div>
+                             <div>
+                                 <p className="text-sm font-bold text-slate-900 leading-none mb-1">{user?.name || 'Professor'}</p>
+                                 <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Faculty Member</p>
+                             </div>
+                             <div className="ml-4 h-8 w-8 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100 text-slate-400 group-hover:text-orange-600 transition-colors">
+                                 <Bell className="h-4 w-4" />
+                             </div>
                         </div>
                     </div>
                 </header>
 
-                <div className="flex-1 overflow-y-auto px-10 py-6">
-                    <Outlet />
+                <div className="flex-1 overflow-y-auto px-8 lg:px-12 py-10 custom-scrollbar bg-[#f8f9fa]">
+                    <div className="max-w-7xl mx-auto">
+                        <Outlet />
+                    </div>
                 </div>
             </main>
         </div>

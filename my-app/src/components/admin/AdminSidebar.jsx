@@ -1,27 +1,38 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '../../utils/cn';
-import { LayoutDashboard, Users, GraduationCap, FileWarning, Settings, LogOut, FileText, Calendar } from 'lucide-react';
+import { 
+    LayoutDashboard, 
+    Users, 
+    GraduationCap, 
+    LogOut, 
+    MessageSquare,
+    Shield,
+    ArrowRight,
+    UserCheck,
+    Briefcase,
+    Activity,
+    ClipboardCheck
+} from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const AdminSidebar = ({ isOpen, setIsOpen }) => {
     const location = useLocation();
-    const { logout, user } = useAuth();
+    const { logout } = useAuth();
 
     const menuItems = [
-        { icon: LayoutDashboard, label: 'Overview', path: '/admin-dashboard' },
-        { icon: GraduationCap, label: 'Students', path: '/admin-dashboard/students' },
-        { icon: Users, label: 'Faculty', path: '/admin-dashboard/faculty' },
-        { icon: FileText, label: 'Requests', path: '/admin-dashboard/requests' },
-        { icon: Calendar, label: 'Mentorship', path: '/admin-dashboard/mentorship' },
-        { icon: FileWarning, label: 'Feedback', path: '/admin-dashboard/feedback' },
+        { icon: LayoutDashboard, label: 'Bureau Overview', path: '/admin-dashboard' },
+        { icon: GraduationCap, label: 'Student Bureau', path: '/admin-dashboard/students' },
+        { icon: Briefcase, label: 'Faculty Bureau', path: '/admin-dashboard/faculty' },
+        { icon: MessageSquare, label: 'Student Requests', path: '/admin-dashboard/requests' },
+        { icon: UserCheck, label: 'Access Control', path: '/admin-dashboard/approvals' },
     ];
 
     return (
         <>
             <div
                 className={cn(
-                    "fixed inset-0 bg-slate-900/50 z-40 transition-opacity lg:hidden",
+                    "fixed inset-0 bg-black/60 z-40 transition-opacity lg:hidden backdrop-blur-sm",
                     isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
                 )}
                 onClick={() => setIsOpen(false)}
@@ -29,50 +40,60 @@ const AdminSidebar = ({ isOpen, setIsOpen }) => {
 
             <aside
                 className={cn(
-                    "fixed lg:static inset-y-0 left-0 z-50 w-72 bg-slate-900 border-r border-slate-800 transform transition-transform duration-200 ease-in-out lg:transform-none flex flex-col text-white",
-                    isOpen ? "translate-x-0" : "-translate-x-full"
+                    "fixed md:static inset-y-0 left-0 z-50 w-72 bg-[#171317] flex flex-col text-white shadow-2xl overflow-hidden transition-transform duration-300 ease-in-out",
+                    isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
                 )}
             >
-                <div className="h-16 flex items-center px-8 border-b border-slate-800">
-                    <span className="text-xl font-black text-white">Campus<span className="text-indigo-500">Admin</span></span>
-                </div>
-
-                <div className="p-4">
-                    <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700">
-                        <p className="text-xs text-slate-400 uppercase font-bold tracking-wider mb-1">Current Role</p>
-                        <p className="text-sm font-medium text-white">{user?.adminRole || 'System Admin'}</p>
+                <div className="p-8 pb-4">
+                    <div className="flex items-center gap-4 bg-white/5 p-4 rounded-[2rem] border border-white/5 shadow-2xl relative overflow-hidden group">
+                        <div className="absolute inset-0 bg-gradient-to-br from-orange-600/10 to-transparent"></div>
+                        <div className="h-12 w-12 rounded-2xl bg-orange-600 flex items-center justify-center shadow-lg shadow-orange-600/20 relative z-10">
+                            <Shield className="h-6 w-6 text-white" />
+                        </div>
+                        <div className="relative z-10 leading-none">
+                            <p className="text-xl font-black text-white tracking-widest uppercase">Admin</p>
+                            <p className="text-[10px] font-black text-orange-500 uppercase tracking-widest mt-1 opacity-80 italic">Bureau Core</p>
+                        </div>
                     </div>
                 </div>
 
-                <nav className="flex-1 px-4 py-2 space-y-1 overflow-y-auto">
+                <nav className="flex-1 px-5 py-8 space-y-3 overflow-y-auto custom-scrollbar">
                     {menuItems.map((item) => {
                         const isActive = location.pathname === item.path || (item.path !== '/admin-dashboard' && location.pathname.startsWith(item.path));
                         return (
                             <Link
                                 key={item.label}
                                 to={item.path}
+                                onClick={() => setIsOpen(false)}
                                 className={cn(
-                                    "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors",
+                                    "flex items-center justify-between px-5 py-4 rounded-[1.5rem] text-sm font-bold transition-all group relative overflow-hidden",
                                     isActive
-                                        ? "bg-indigo-600 text-white"
-                                        : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                                        ? "bg-orange-600 text-white shadow-xl shadow-orange-950/40"
+                                        : "text-slate-400 hover:bg-white/5 hover:text-white"
                                 )}
                             >
-                                <item.icon className={cn("h-5 w-5", isActive ? "text-white" : "text-slate-500")} />
-                                {item.label}
+                                <div className="flex items-center gap-4 relative z-10">
+                                    <item.icon className={cn("h-5 w-5 transition-colors", isActive ? "text-white" : "text-orange-600 group-hover:text-white")} />
+                                    {item.label}
+                                </div>
+                                {isActive && <ArrowRight className="h-4 w-4 text-white relative z-10" />}
                             </Link>
                         )
                     })}
                 </nav>
 
-                <div className="p-4 border-t border-slate-800">
-                    <button
-                        onClick={logout}
-                        className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-sm font-medium text-red-500 hover:bg-red-500/10 transition-colors"
-                    >
-                        <LogOut className="h-5 w-5" />
-                        Sign Out
-                    </button>
+                <div className="px-6 pb-12 mt-auto">
+                    <div className="bg-[#2d1b18] rounded-[2rem] p-6 border border-white/5 shadow-2xl relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-orange-600/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
+                        <p className="text-[10px] font-black text-orange-400 uppercase tracking-[0.2em] mb-4 relative z-10 italic">Terminal Logout</p>
+                        <button
+                            onClick={logout}
+                            className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl text-sm font-black text-white bg-[#ef5350] hover:bg-[#d32f2f] transition-all shadow-lg active:scale-95 relative z-10"
+                        >
+                            <LogOut className="h-5 w-5" />
+                            Sign Out
+                        </button>
+                    </div>
                 </div>
             </aside>
         </>

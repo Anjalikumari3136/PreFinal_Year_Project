@@ -21,10 +21,13 @@ import Performance from './pages/faculty/Performance';
 import NoticeBoard from './pages/faculty/NoticeBoard';
 import Resources from './pages/faculty/Resources';
 import FacultyProfile from './pages/faculty/Profile';
+import FacultyMentorship from './pages/faculty/Mentorship';
+import GrievanceResolution from './pages/faculty/Grievances';
 import FacultyManagement from './pages/admin/FacultyManagement';
 import FeedbackManagement from './pages/admin/FeedbackManagement';
 import Mentorship from './pages/dashboard/Mentorship';
 import MentorshipManagement from './pages/admin/MentorshipManagement';
+import RegistrationRequests from './pages/admin/RegistrationRequests';
 import FeaturesPage from './pages/Features';
 import AboutPage from './pages/About';
 import ContactPage from './pages/Contact';
@@ -96,6 +99,7 @@ function App() {
               </RoleProtectedRoute>
             }>
               <Route index element={<AdminOverview />} />
+              <Route path="approvals" element={<RegistrationRequests />} />
               <Route path="students" element={<StudentManagement />} />
               <Route path="faculty" element={<FacultyManagement />} />
               <Route path="requests" element={<AdminRequests />} />
@@ -115,6 +119,8 @@ function App() {
               <Route path="my-attendance" element={<div>My Personal Attendance Records</div>} />
               <Route path="notice" element={<NoticeBoard />} />
               <Route path="profile" element={<FacultyProfile />} />
+              <Route path="mentorship" element={<FacultyMentorship />} />
+              <Route path="grievances" element={<GrievanceResolution />} />
 
               <Route path="students" element={<Navigate to="/faculty-dashboard" />} />
               <Route path="courses" element={<Navigate to="/faculty-dashboard/resources" />} />

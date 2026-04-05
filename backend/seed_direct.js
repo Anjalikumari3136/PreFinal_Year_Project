@@ -23,7 +23,9 @@ const seedDirect = async () => {
             email: adminEmail,
             password: adminPass,
             role: "ADMIN",
-            department: "Administration"
+            department: "Administration",
+            status: "APPROVED",
+            isVerified: true
         });
 
         console.log(`\nSUCCESS: Admin created.`);
@@ -43,7 +45,9 @@ const seedDirect = async () => {
             password: facultyPass,
             role: "FACULTY",
             department: "Computer Science",
-            designation: "Professor"
+            designation: "Professor",
+            status: "APPROVED",
+            isVerified: true
         });
 
         console.log(`SUCCESS: Faculty created.`);

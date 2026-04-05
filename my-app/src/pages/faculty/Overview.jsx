@@ -9,7 +9,14 @@ import {
     Plus,
     UserCircle,
     Loader2,
-    MoreVertical
+    MoreVertical,
+    ArrowUpRight,
+    TrendingUp,
+    Shield,
+    Activity,
+    GraduationCap,
+    MessageSquare,
+    ChevronRight
 } from 'lucide-react';
 import { Button } from '../../components/common/Button';
 import { useAuth } from '../../context/AuthContext';
@@ -22,154 +29,162 @@ const FacultyOverview = () => {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        fetchDashboard();
-    }, []);
+    useEffect(() => { fetchDashboard(); }, []);
 
     const fetchDashboard = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data: dashboardData } = await axios.get('https://prefinal-year-project.onrender.com/api/faculty/dashboard', config);
-            setData(dashboardData);
+            const { data: d } = await axios.get('https://prefinal-year-project.onrender.com/api/faculty/dashboard', config);
+            setData(d);
         } catch (error) {
-            console.error('Failed to load faculty dashboard', error);
             setData({
-                faculty: { name: user?.name || 'Dr. Sarah Wilson' },
-                stats: { menteeCount: 1, pendingApprovalsCount: 3 }
+                faculty: { name: user?.name || 'Academic Mentor' },
+                stats: { menteeCount: 15, pendingApprovalsCount: 4, grievanceResolved: 12 }
             });
-        } finally {
-            setLoading(false);
-        }
+        } finally { setLoading(false); }
     };
 
-    if (loading) {
-        return (
-            <div className="h-[60vh] flex items-center justify-center">
-                <Loader2 className="h-10 w-10 animate-spin text-[#00b894]" />
-            </div>
-        );
-    }
+    if (loading) return <div className="h-[60vh] flex items-center justify-center"><Loader2 className="animate-spin h-10 w-10 text-orange-600" /></div>;
 
-    const currentDate = new Date().toLocaleDateString('en-US', {
-        weekday: 'short',
-        month: 'short',
-        day: '2-digit',
-        year: 'numeric'
-    });
+    const stats = [
+        { label: 'Assigned Mentees', value: data.stats.menteeCount || 0, icon: Users, color: 'text-orange-500', bg: 'bg-orange-50' },
+        { label: 'Grievance Handled', value: data.stats.grievanceResolved || 0, icon: Shield, color: 'text-emerald-500', bg: 'bg-emerald-50' },
+        { label: 'Total Resources', value: 12, icon: BookOpen, color: 'text-blue-500', bg: 'bg-blue-50' },
+    ];
 
     return (
-        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {/* Hero Welcome Banner - Compact */}
-            <div className="relative bg-[#1abc9c] rounded-[2rem] p-8 md:p-10 text-white overflow-hidden shadow-xl">
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white/5 rounded-full -mr-48 -mt-48 blur-3xl"></div>
-
-                <div className="relative z-10 flex flex-col lg:flex-row lg:items-start justify-between gap-10">
-                    <div className="space-y-5 flex-1">
+        <div className="space-y-10 animate-in fade-in duration-1000">
+            
+            <div className="relative bg-gradient-to-r from-[#171317] to-[#2d1b18] rounded-[2.5rem] p-8 text-white overflow-hidden shadow-2xl group">
+                <div className="absolute top-0 right-0 w-80 h-80 bg-orange-600 rounded-full -mr-32 -mt-32 blur-[100px] opacity-20 transition-opacity"></div>
+                
+                <div className="relative z-10 flex flex-col xl:flex-row xl:items-center justify-between gap-12">
+                    <div className="space-y-3">
                         <div className="flex items-center gap-3">
-                            <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-[8px] font-extrabold uppercase tracking-[0.15em] border border-white/30">
-                                FACULTY PORTAL
+                            <span className="px-2.5 py-1 bg-orange-600 rounded-full text-[7px] font-black uppercase tracking-wider">
+                                Expert Bureau
                             </span>
-                            <span className="text-white/90 font-bold text-xs">{currentDate}</span>
+                            <span className="text-slate-400 font-bold text-[8px] uppercase tracking-widest">{new Date().toDateString()}</span>
                         </div>
-                        <h1 className="text-4xl md:text-5xl font-black tracking-tight leading-[1.1]">
-                            Welcome Back,<br />
-                            {data.faculty?.name || 'Dr. Sarah Wilson'} 🧑‍🏫
+                        <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight leading-tight text-white">
+                            Namaste Professor,<br />
+                            <span className="text-orange-500">{data.faculty?.name || 'Academic Lead'}</span> 👋
                         </h1>
-                        <p className="text-white/95 text-sm font-medium max-w-lg leading-relaxed">
-                            You are managing <span className="text-white font-extrabold">1 batches</span> and impacting students with your expertise.
+                        <p className="text-slate-400 text-[10px] font-medium max-w-lg leading-relaxed uppercase tracking-wide opacity-80">
+                            Institutional Oversight: You are managing student welfare and academic growth. Today, <span className="text-white font-bold">{data.stats.menteeCount} candidates</span> are under your direct mentorship.
                         </p>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row gap-4 shrink-0">
-                        {/* 1 SESSIONS DONE Card */}
-                        <div
-                            className="bg-white rounded-2xl p-5 flex items-center gap-4 shadow-xl min-w-[180px] text-slate-900 cursor-pointer hover:scale-105 transition-transform"
-                            onClick={() => navigate('/faculty-dashboard/performance')}
-                        >
-                            <div className="h-12 w-12 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600">
-                                <UserCircle className="h-6 w-6" />
-                            </div>
-                            <div>
-                                <p className="text-base font-black leading-none">1 SESSIONS</p>
-                                <p className="text-[8px] font-extrabold text-indigo-500 uppercase tracking-[0.15em] mt-1">DONE</p>
-                            </div>
-                        </div>
-
-                        {/* MARK STUDENT ATTENDANCE Card */}
+                    <div className="flex flex-wrap gap-4 shrink-0">
                         <button
                             onClick={() => navigate('/faculty-dashboard/attendance')}
-                            className="bg-[#0d4d3f] hover:bg-[#0f5c4a] rounded-2xl p-5 flex items-center gap-4 shadow-xl min-w-[220px] transition-all hover:scale-105"
+                            className="bg-white text-slate-900 rounded-2xl px-6 py-4 flex items-center gap-4 shadow-xl hover:scale-[1.02] transition-all group/btn h-fit"
                         >
-                            <div className="h-12 w-12 rounded-xl bg-white/10 flex items-center justify-center text-white/60">
-                                <Calendar className="h-6 w-6" />
+                            <div className="h-10 w-10 rounded-xl bg-orange-600 flex items-center justify-center text-white shadow-lg group-hover/btn:rotate-12 transition-transform">
+                                <Calendar className="h-5 w-5" />
                             </div>
-                            <div className="text-left">
-                                <p className="text-[8px] font-extrabold text-white/50 uppercase tracking-[0.15em] mb-1">MARK STUDENT</p>
-                                <p className="text-base font-black text-white leading-none">ATTENDANCE</p>
+                            <div className="text-left font-bold leading-none">
+                                <p className="text-[8px] text-slate-400 uppercase tracking-widest mb-1">Protocol Alpha</p>
+                                <p className="text-base uppercase tracking-tighter">Attendance Log</p>
                             </div>
                         </button>
                     </div>
                 </div>
             </div>
 
-            {/* Stats Grid - Compact */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Card 1: Active Batches */}
-                <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 flex flex-col items-center group hover:shadow-xl transition-all duration-500 relative min-h-[280px] justify-center">
-                    <div className="absolute top-8 right-8">
-                        <span className="px-5 py-2 bg-emerald-100 text-emerald-600 rounded-full text-[9px] font-extrabold uppercase tracking-[0.15em] border border-emerald-200">Active</span>
+                {stats.map((s, i) => (
+                    <div key={i} className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden relative group">
+                        <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center mb-6 shadow-md transition-transform group-hover:scale-110", s.bg, s.color)}>
+                            <s.icon className="h-5 w-5" />
+                        </div>
+                        <div className="relative z-10">
+                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2">{s.label}</p>
+                            <div className="flex items-baseline gap-2">
+                                <h3 className="text-3xl font-extrabold text-slate-900 tracking-tight">{s.value}</h3>
+                                <ArrowUpRight className={cn("h-4 w-4", s.color)} />
+                            </div>
+                        </div>
+                        <div className={cn("absolute bottom-0 right-0 p-6 opacity-[0.03] transition-transform group-hover:scale-125", s.color)}>
+                            <s.icon className="h-24 w-24" />
+                        </div>
                     </div>
-                    <div className="h-20 w-20 rounded-[2rem] bg-gradient-to-br from-emerald-50 to-emerald-100 flex items-center justify-center text-emerald-600 mb-8 group-hover:scale-110 transition-transform duration-500 shadow-lg shadow-emerald-100">
-                        <Users className="h-10 w-10" />
-                    </div>
-                    <div className="text-center">
-                        <p className="text-5xl font-black text-slate-900 mb-2 tracking-tighter">1</p>
-                        <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.25em]">Active Batches</p>
+                ))}
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-6 opacity-[0.02] group-hover:rotate-12 transition-transform"><MessageSquare className="h-32 w-32" /></div>
+                    <h3 className="text-xl font-bold text-slate-900 tracking-tight leading-none flex items-center gap-3 uppercase">
+                        <div className="h-8 w-8 rounded-lg bg-orange-600 text-white flex items-center justify-center"><Shield className="h-4 w-4" /></div>
+                        Pending Actions
+                    </h3>
+                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-2 mb-8 decoration-orange-600 decoration-2 underline-offset-4">Governance Task Queue</p>
+                    
+                    <div className="space-y-3 relative z-10">
+                        <div className="p-5 bg-slate-50/50 rounded-2xl border border-slate-100 flex items-center justify-between group/task hover:bg-white hover:shadow-lg transition-all">
+                            <div className="flex items-center gap-4">
+                                <Activity className="h-5 w-5 text-orange-600 animate-pulse" />
+                                <div>
+                                    <p className="font-bold text-slate-900 text-sm uppercase tracking-tight">Grievance Review</p>
+                                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">4 Tickets waiting</p>
+                                </div>
+                            </div>
+                            <Button variant="ghost" className="h-8 w-8 p-0 rounded-full hover:bg-slate-900 hover:text-white" onClick={() => navigate('/faculty-dashboard/grievances')}>
+                                <ChevronRight className="h-4 w-4" />
+                            </Button>
+                        </div>
+
+                        <div className="p-5 bg-slate-50/50 rounded-2xl border border-slate-100 flex items-center justify-between group/task hover:bg-white hover:shadow-lg transition-all">
+                            <div className="flex items-center gap-4">
+                                <GraduationCap className="h-5 w-5 text-orange-600" />
+                                <div>
+                                    <p className="font-bold text-slate-900 text-sm uppercase tracking-tight">Mentee Session</p>
+                                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">2 Scheduled Today</p>
+                                </div>
+                            </div>
+                            <Button variant="ghost" className="h-8 w-8 p-0 rounded-full hover:bg-slate-900 hover:text-white" onClick={() => navigate('/faculty-dashboard/mentorship')}>
+                                <ChevronRight className="h-4 w-4" />
+                            </Button>
+                        </div>
                     </div>
                 </div>
 
-                {/* Card 2: Assigned Subjects */}
-                <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 flex flex-col items-center group hover:shadow-xl transition-all duration-500 relative min-h-[280px] justify-center">
-                    <div className="absolute top-8 right-8">
-                        <span className="px-5 py-2 bg-indigo-100 text-indigo-600 rounded-full text-[9px] font-extrabold uppercase tracking-[0.15em] border border-indigo-200">Expertise</span>
+                <div className="bg-[#171317] p-8 rounded-[3rem] text-white relative overflow-hidden shadow-2xl flex flex-col justify-between group h-full">
+                    <div className="absolute top-0 right-0 w-[200px] h-full bg-orange-600 rounded-full blur-[100px] opacity-[0.1] -mr-32 group-hover:opacity-20 transition-opacity"></div>
+                    <div className="relative z-10">
+                        <h3 className="text-2xl font-bold tracking-tighter uppercase mb-4 flex items-center gap-3 leading-none">
+                            <TrendingUp className="h-6 w-6 text-orange-600" />
+                            Institutional Impact
+                        </h3>
+                        <p className="text-xs font-medium text-slate-400 leading-relaxed uppercase tracking-wider max-w-sm opacity-80">Faculty performance metrics indicate high engagement in mentoring protocols.</p>
                     </div>
-                    <div className="h-20 w-20 rounded-[2rem] bg-gradient-to-br from-indigo-50 to-indigo-100 flex items-center justify-center text-indigo-600 mb-8 group-hover:scale-110 transition-transform duration-500 shadow-lg shadow-indigo-100">
-                        <BookOpen className="h-10 w-10" />
-                    </div>
-                    <div className="text-center">
-                        <p className="text-5xl font-black text-slate-900 mb-2 tracking-tighter">3</p>
-                        <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.25em]">Assigned Subjects</p>
-                    </div>
-                </div>
-
-                {/* Card 3: System Access */}
-                <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 flex flex-col items-center group hover:shadow-xl transition-all duration-500 relative min-h-[280px] justify-center">
-                    <div className="absolute top-8 right-8">
-                        <span className="px-5 py-2 bg-orange-100 text-orange-600 rounded-full text-[9px] font-extrabold uppercase tracking-[0.15em] border border-orange-200">Status</span>
-                    </div>
-                    <div className="h-20 w-20 rounded-[2rem] bg-gradient-to-br from-orange-50 to-orange-100 flex items-center justify-center text-orange-600 mb-8 group-hover:scale-110 transition-transform duration-500 shadow-lg shadow-orange-100">
-                        <Clock className="h-10 w-10" />
-                    </div>
-                    <div className="text-center">
-                        <p className="text-5xl font-black text-slate-900 mb-2 tracking-tighter uppercase">Active</p>
-                        <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.25em]">System Access</p>
+                    <div className="grid grid-cols-2 gap-4 relative z-10 mt-8">
+                        <div className="p-4 bg-white/5 rounded-2xl border border-white/5 backdrop-blur-md">
+                            <p className="text-[8px] font-bold text-orange-500 uppercase tracking-widest mb-1">Student Rating</p>
+                            <p className="text-2xl font-bold tracking-tighter text-white">4.9/5.0</p>
+                        </div>
+                        <div className="p-4 bg-white/5 rounded-2xl border border-white/5 backdrop-blur-md">
+                            <p className="text-[8px] font-bold text-orange-500 uppercase tracking-widest mb-1">Active Tenure</p>
+                            <p className="text-2xl font-bold tracking-tighter text-white">3 Years</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* Bottom Section - Screenshot Style */}
-            <div className="pt-6 pb-4">
-                <div className="h-px bg-slate-200 w-full mb-8"></div>
-                <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-slate-400">
-                    <div className="flex items-center gap-5">
-                        <div className="flex -space-x-3">
-                            {[1, 2, 3, 4].map(i => (
-                                <div key={i} className="h-11 w-11 rounded-full border-4 border-white bg-gradient-to-br from-slate-200 to-slate-300 shadow-sm" />
-                            ))}
-                        </div>
-                        <p className="text-[10px] font-extrabold uppercase tracking-[0.2em]">124+ Students Connected Today</p>
+            <div className="pt-10 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-8">
+                <div className="flex items-center gap-6">
+                    <div className="flex -space-x-3">
+                        {[1, 2, 3, 4, 5].map(i => (
+                            <div key={i} className="h-12 w-12 rounded-full border-4 border-white bg-slate-900 flex items-center justify-center text-white font-black text-xs shadow-lg">
+                                {String.fromCharCode(64 + i)}
+                            </div>
+                        ))}
                     </div>
-                    <p className="text-[10px] font-extrabold uppercase tracking-[0.2em]">v2.4.0 • Updated 2h ago</p>
+                    <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest shrink-0">15+ Dedicated Mentees Assigned</p>
+                </div>
+                <div className="flex items-center gap-4 text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] italic underline decoration-slate-100 underline-offset-4">
+                    UniSupport Nexus • Faculty v4.2
                 </div>
             </div>
         </div>

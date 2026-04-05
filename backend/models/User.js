@@ -20,6 +20,11 @@ const UserSchema = new mongoose.Schema({
     year: { type: Number }, // 1, 2, 3, 4
     semester: { type: Number }, // 1-8
     isActive: { type: Boolean, default: true },
+    status: {
+        type: String,
+        enum: ['PENDING', 'APPROVED', 'REJECTED'],
+        default: 'PENDING'
+    },
     assignedMentor: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     designation: { type: String }, // For faculty
     facultyRoles: [{

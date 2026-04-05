@@ -7,11 +7,13 @@ import {
     MessageSquare,
     TrendingUp,
     Calendar,
-    UserCircle,
+    Target,
+    ChevronRight,
+    ArrowUpRight,
     Star,
     Award,
-    Target,
-    ChevronRight
+    Activity,
+    Shield
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/common/Button';
@@ -30,16 +32,15 @@ const Overview = () => {
     const [stats, setStats] = useState({
         pending: 0,
         resolved: 0,
-        attendance: '92%',
-        cgpa: '8.9',
+        attendance: '94.5%',
+        cgpa: '9.2',
         hasApprovedMentorship: false
     });
     const [assignedMentor, setAssignedMentor] = useState(null);
 
     const currentDate = new Date().toLocaleDateString('en-US', {
-        weekday: 'short',
-        year: 'numeric',
-        month: 'short',
+        weekday: 'long',
+        month: 'long',
         day: 'numeric'
     });
 
@@ -47,298 +48,267 @@ const Overview = () => {
         const fetchDashboardData = async () => {
             try {
                 const config = { headers: { Authorization: `Bearer ${user.token}` } };
-
                 const [reqRes, profileRes, mentorRes] = await Promise.allSettled([
                     axios.get('https://prefinal-year-project.onrender.com/api/requests', config),
                     axios.get('https://prefinal-year-project.onrender.com/api/auth/profile', config),
                     axios.get('https://prefinal-year-project.onrender.com/api/mentorship/my-requests', config)
                 ]);
 
-                let pendingCount = 0;
-                let resolvedCount = 0;
-                let mentorshipApproved = false;
+                let pCount = 0;
+                let rCount = 0;
+                let mentorApproved = false;
 
                 if (reqRes.status === 'fulfilled') {
-                    setRequests(reqRes.value.data.slice(0, 3));
-                    pendingCount += reqRes.value.data.filter(r => r.status === 'PENDING' || r.status === 'IN_PROGRESS').length;
-                    resolvedCount += reqRes.value.data.filter(r => r.status === 'RESOLVED').length;
+                    pCount += reqRes.value.data.filter(r => r.status === 'PENDING' || r.status === 'IN_PROGRESS').length;
+                    rCount += reqRes.value.data.filter(r => r.status === 'RESOLVED').length;
                 }
 
                 if (mentorRes.status === 'fulfilled') {
                     const mData = mentorRes.value.data;
-                    pendingCount += mData.filter(m => m.status === 'PENDING').length;
-                    const approved = mData.some(m => m.status === 'APPROVED' || m.status === 'SCHEDULED');
-                    mentorshipApproved = approved;
-                    resolvedCount += mData.filter(m => m.status === 'APPROVED' || m.status === 'SCHEDULED' || m.status === 'COMPLETED').length;
+                    pCount += mData.filter(m => m.status === 'PENDING').length;
+                    mentorApproved = mData.some(m => m.status === 'APPROVED' || m.status === 'SCHEDULED');
+                    rCount += mData.filter(m => ['APPROVED', 'SCHEDULED', 'COMPLETED'].includes(m.status)).length;
                 }
 
                 if (profileRes.status === 'fulfilled' && profileRes.value.data.assignedMentor) {
                     setAssignedMentor(profileRes.value.data.assignedMentor);
                 }
 
-                let combinedActivity = [];
-                if (reqRes.status === 'fulfilled') {
-                    combinedActivity = [...reqRes.value.data];
-                }
+                let activity = [];
+                if (reqRes.status === 'fulfilled') activity = [...reqRes.value.data];
                 if (mentorRes.status === 'fulfilled') {
-                    const mappedMentors = mentorRes.value.data.map(m => ({
-                        ...m,
-                        title: `Mentorship: ${m.mentor?.name || 'Faculty'}`,
-                        category: 'Mentorship',
-                        isMentorship: true
-                    }));
-                    combinedActivity = [...combinedActivity, ...mappedMentors];
+                    activity = [...activity, ...mentorRes.value.data.map(m => ({ ...m, title: `Mentor Session: ${m.mentor?.name || 'Faculty'}`, isMentorship: true }))];
                 }
+                activity.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setRequests(activity.slice(0, 5));
 
-                combinedActivity.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                setRequests(combinedActivity.slice(0, 5));
-
-                setStats(prev => ({
-                    ...prev,
-                    pending: pendingCount,
-                    resolved: resolvedCount,
-                    hasApprovedMentorship: mentorshipApproved
-                }));
-
-            } catch (error) {
-                console.error("Critical error in dashboard data fetching", error);
-            } finally {
-                setLoading(false);
-            }
+                setStats(p => ({ ...p, pending: pCount, resolved: rCount, hasApprovedMentorship: mentorApproved }));
+            } catch (error) { console.error(error); }
+            finally { setLoading(false); }
         };
-
         if (user) fetchDashboardData();
     }, [user]);
 
-    return (
-        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            
-            <div className="relative bg-[#1abc9c] rounded-[2rem] p-8 md:p-10 text-white overflow-hidden shadow-xl">
-                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
+    const cards = [
+        { label: 'Attendance', value: stats.attendance, icon: Calendar, color: 'text-emerald-500', bg: 'bg-emerald-50', sub: 'Live Presence' },
+        { label: 'Academic CGPA', value: stats.cgpa, icon: Award, color: 'text-orange-500', bg: 'bg-orange-50', sub: 'Univ. Ranking' },
+        { label: 'Support Reqs', value: stats.resolved, icon: Shield, color: 'text-blue-500', bg: 'bg-blue-50', sub: 'Resolved Total' },
+    ];
 
-                <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-                    <div className="space-y-3 flex-1">
+    return (
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+            
+            <div className="relative bg-gradient-to-r from-[#171317] to-[#2d1b18] rounded-[2.5rem] p-10 md:p-12 text-white overflow-hidden shadow-2xl group">
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-600 rounded-full -mr-48 -mt-48 blur-[120px] opacity-20 group-hover:opacity-30 transition-opacity"></div>
+                
+                <div className="relative z-10 flex flex-col xl:flex-row xl:items-center justify-between gap-10">
+                    <div className="space-y-4">
                         <div className="flex items-center gap-3">
-                            <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-[8px] font-extrabold uppercase tracking-[0.15em] border border-white/30">
-                                STUDENT PORTAL
+                            <span className="px-4 py-1.5 bg-orange-600 rounded-full text-[9px] font-black uppercase tracking-[0.2em] shadow-lg shadow-orange-600/20">
+                                Universe Portal
                             </span>
-                            <span className="text-white/90 font-bold text-xs">{currentDate}</span>
+                            <span className="text-slate-400 font-bold text-[10px] uppercase tracking-widest">{currentDate}</span>
                         </div>
-                        <h1 className="text-4xl md:text-5xl font-black tracking-tight leading-[1.1]">
-                            Welcome Back,<br />
-                            {user?.name || 'Student'} 🎓
+                        <h1 className="text-4xl md:text-6xl font-black tracking-tighter leading-tight">
+                            Namaste Student,<br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">{user?.name || 'Academic Scholar'}</span> 👋
                         </h1>
-                        <p className="text-white/95 text-sm font-medium max-w-lg leading-relaxed">
-                            You have <span className="text-white font-extrabold">{stats.pending} pending requests</span> and your academic journey is on track.
+                        <p className="text-slate-400 text-sm font-medium max-w-xl leading-relaxed uppercase tracking-wide">
+                            You have <span className="text-orange-500 font-black">{stats.pending} pending requests</span>. Your overall performance is <span className="text-white font-black underline underline-offset-8 decoration-orange-600">Exceptional</span>.
                         </p>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row gap-4 shrink-0">
-                       
-                        <div
-                            className="bg-white rounded-2xl p-5 flex items-center gap-4 shadow-xl min-w-[180px] text-slate-900 cursor-pointer hover:scale-105 transition-transform"
-                            onClick={() => navigate('/dashboard/requests')}
-                        >
-                            <div className="h-12 w-12 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600">
-                                <Clock className="h-6 w-6" />
-                            </div>
-                            <div>
-                                <p className="text-base font-black leading-none">{stats.pending} PENDING</p>
-                                <p className="text-[8px] font-extrabold text-indigo-500 uppercase tracking-[0.15em] mt-1">REQUESTS</p>
-                            </div>
-                        </div>
-
+                    <div className="flex flex-wrap gap-4 shrink-0">
                         <button
                             onClick={() => setIsModalOpen(true)}
-                            className="bg-[#0d4d3f] hover:bg-[#0f5c4a] rounded-2xl p-5 flex items-center gap-4 shadow-xl min-w-[220px] transition-all hover:scale-105"
+                            className="bg-white text-slate-900 rounded-[1.5rem] px-8 py-5 flex items-center gap-4 shadow-2xl hover:scale-[1.03] transition-all group/btn h-fit"
                         >
-                            <div className="h-12 w-12 rounded-xl bg-white/10 flex items-center justify-center text-white/60">
+                            <div className="h-12 w-12 rounded-xl bg-orange-600 flex items-center justify-center text-white shadow-lg shadow-orange-600/20 group-hover/btn:rotate-12 transition-transform">
                                 <MessageSquare className="h-6 w-6" />
                             </div>
-                            <div className="text-left">
-                                <p className="text-[8px] font-extrabold text-white/50 uppercase tracking-[0.15em] mb-1">CREATE NEW</p>
-                                <p className="text-base font-black text-white leading-none">REQUEST</p>
+                            <div className="text-left font-black leading-none">
+                                <p className="text-[9px] text-slate-400 uppercase tracking-widest mb-1">New Action</p>
+                                <p className="text-lg uppercase tracking-tighter">Submit Request</p>
                             </div>
                         </button>
                     </div>
                 </div>
             </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {cards.map((c, i) => (
+                    <div key={i} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-500 group relative overflow-hidden">
+                        <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center mb-6 shadow-lg transition-transform group-hover:scale-110", c.bg, c.color)}>
+                            <c.icon className="h-6 w-6" />
+                        </div>
+                        <div className="relative z-10">
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{c.label}</p>
+                            <div className="flex items-baseline gap-2">
+                                <h3 className="text-4xl font-black text-slate-900 tracking-tighter">{c.value}</h3>
+                                <ArrowUpRight className={cn("h-4 w-4", c.color)} />
+                            </div>
+                            <p className="text-[9px] font-bold text-slate-400 mt-2 uppercase tracking-widest">{c.sub}</p>
+                        </div>
+                        <div className={cn("absolute bottom-0 right-0 p-8 opacity-[0.03] transition-transform group-hover:scale-125 group-hover:rotate-12", c.color)}>
+                            <c.icon className="h-24 w-24" />
+                        </div>
+                    </div>
+                ))}
+            </div>
+
             {stats.hasApprovedMentorship && (
-                <div className="bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-700 rounded-[2rem] p-8 text-white shadow-2xl relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-10 opacity-10 rotate-12">
+                <div className="bg-gradient-to-r from-orange-600 to-[#f4511e] rounded-[2.5rem] p-8 md:p-10 text-white shadow-2xl relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-10 opacity-10 group-hover:rotate-12 transition-transform">
                         <Star className="h-32 w-32" />
                     </div>
-                    <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6">
-                        <div className="space-y-3">
-                            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/20 backdrop-blur-xl rounded-full text-[10px] font-black uppercase tracking-[0.2em]">
-                                <CheckCircle className="h-3.5 w-3.5 text-emerald-300" /> Mentorship Active
+                    <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
+                        <div className="space-y-4 text-center lg:text-left">
+                            <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-black/20 backdrop-blur-xl rounded-full text-[10px] font-black uppercase tracking-[0.25em] border border-white/10">
+                                <Activity className="h-4 w-4 text-emerald-400 animate-pulse" /> Mentorship Active
                             </div>
-                            <h2 className="text-3xl font-black tracking-tight">Congratulations! Your request is Approved.</h2>
-                            <p className="text-indigo-100/90 text-base max-w-xl">Your mentorship application has been approved. Connect with your mentor now!</p>
+                            <h2 className="text-3xl md:text-4xl font-black tracking-tight leading-none uppercase">Success! Session Approved.</h2>
+                            <p className="text-orange-50 font-medium max-w-xl text-sm leading-relaxed">Connect with your mentor to accelerate your growth and academic journey.</p>
                         </div>
-                        <Button
-                            className="bg-white text-indigo-700 hover:bg-slate-100 font-black px-8 py-6 rounded-2xl shadow-xl"
+                        <Button 
                             onClick={() => navigate('/dashboard/mentorship')}
+                            className="bg-[#171317] text-white hover:bg-black px-10 py-6 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-2xl active:scale-95 transition-all outline-none border-none"
                         >
-                            Get Started <ChevronRight className="h-5 w-5 ml-2" />
+                            Start Session <ChevronRight className="h-4 w-4 ml-2" />
                         </Button>
                     </div>
                 </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                
-                <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 flex flex-col items-center group hover:shadow-xl transition-all duration-500 relative min-h-[280px] justify-center">
-                    <div className="absolute top-8 right-8">
-                        <span className="px-5 py-2 bg-emerald-100 text-emerald-600 rounded-full text-[9px] font-extrabold uppercase tracking-[0.15em] border border-emerald-200">Completed</span>
-                    </div>
-                    <div className="h-20 w-20 rounded-[2rem] bg-gradient-to-br from-emerald-50 to-emerald-100 flex items-center justify-center text-emerald-600 mb-8 group-hover:scale-110 transition-transform duration-500 shadow-lg shadow-emerald-100">
-                        <CheckCircle className="h-10 w-10" />
-                    </div>
-                    <div className="text-center">
-                        <p className="text-5xl font-black text-slate-900 mb-2 tracking-tighter">{stats.resolved}</p>
-                        <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.25em]">Resolved Requests</p>
-                    </div>
-                </div>
-
-                <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 flex flex-col items-center group hover:shadow-xl transition-all duration-500 relative min-h-[280px] justify-center">
-                    <div className="absolute top-8 right-8">
-                        <span className="px-5 py-2 bg-indigo-100 text-indigo-600 rounded-full text-[9px] font-extrabold uppercase tracking-[0.15em] border border-indigo-200">Academic</span>
-                    </div>
-                    <div className="h-20 w-20 rounded-[2rem] bg-gradient-to-br from-indigo-50 to-indigo-100 flex items-center justify-center text-indigo-600 mb-8 group-hover:scale-110 transition-transform duration-500 shadow-lg shadow-indigo-100">
-                        <BookOpen className="h-10 w-10" />
-                    </div>
-                    <div className="text-center">
-                        <p className="text-5xl font-black text-slate-900 mb-2 tracking-tighter">{stats.attendance}</p>
-                        <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.25em]">Attendance Rate</p>
-                    </div>
-                </div>
-
-                <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 flex flex-col items-center group hover:shadow-xl transition-all duration-500 relative min-h-[280px] justify-center">
-                    <div className="absolute top-8 right-8">
-                        <span className="px-5 py-2 bg-violet-100 text-violet-600 rounded-full text-[9px] font-extrabold uppercase tracking-[0.15em] border border-violet-200">Performance</span>
-                    </div>
-                    <div className="h-20 w-20 rounded-[2rem] bg-gradient-to-br from-violet-50 to-violet-100 flex items-center justify-center text-violet-600 mb-8 group-hover:scale-110 transition-transform duration-500 shadow-lg shadow-violet-100">
-                        <TrendingUp className="h-10 w-10" />
-                    </div>
-                    <div className="text-center">
-                        <p className="text-5xl font-black text-slate-900 mb-2 tracking-tighter">{stats.cgpa}</p>
-                        <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.25em]">Current CGPA</p>
-                    </div>
-                </div>
-            </div>
-
-            <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
-                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                    <div className="flex items-center gap-5">
-                        <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-indigo-100 to-violet-100 flex items-center justify-center text-indigo-600">
-                            <User className="h-8 w-8" />
-                        </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
+                    <div className="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
                         <div>
-                            <div className="flex items-center gap-3 mb-2">
-                                <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Assigned Mentor</p>
-                                {stats.hasApprovedMentorship && (
-                                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500 text-white text-[10px] font-black uppercase">
-                                        <Star className="h-3 w-3 fill-current" /> Approved
-                                    </div>
-                                )}
+                            <h3 className="text-2xl font-black text-slate-900 tracking-tight leading-none">Recent Activity</h3>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2 underline decoration-orange-600 decoration-2">Last 5 Transactions</p>
+                        </div>
+                        <Button variant="ghost" className="text-[10px] font-black uppercase tracking-widest hover:bg-slate-100 rounded-xl" onClick={() => navigate('/dashboard/requests')}>
+                            See Global Log
+                        </Button>
+                    </div>
+                    <div className="p-4 flex-1 overflow-y-auto custom-scrollbar">
+                        {loading ? (
+                            <div className="flex flex-col items-center justify-center h-full gap-4 text-slate-400 opacity-50">
+                                <Clock className="h-10 w-10 animate-spin" />
+                                <p className="font-bold text-[10px] uppercase tracking-widest">Scanning blockchain...</p>
                             </div>
-                            <h3 className="text-2xl font-black text-slate-900">
-                                {assignedMentor ? `Dr. ${assignedMentor.name}` : 'Awaiting Assignment'}
-                            </h3>
-                            {assignedMentor && (
-                                <div className="flex items-center gap-3 mt-2">
-                                    <span className="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-[10px] font-bold uppercase">{assignedMentor.designation}</span>
-                                    <span className="px-3 py-1 bg-slate-50 text-slate-500 rounded-lg text-[10px] font-bold uppercase">{assignedMentor.department}</span>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                    <Button
-                        className={cn("px-8 py-6 rounded-2xl font-black", assignedMentor ? "bg-indigo-600 text-white hover:bg-indigo-700" : "bg-slate-100 text-slate-600")}
-                        onClick={() => navigate('/dashboard/mentorship')}
-                    >
-                        {assignedMentor ? 'Contact Mentor' : 'Request Mentorship'}
-                    </Button>
-                </div>
-            </div>
-
-            <div className="bg-white rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden">
-                <div className="p-8 border-b border-slate-100 flex justify-between items-center">
-                    <h3 className="text-2xl font-black text-slate-900">Recent Activity</h3>
-                    <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard/requests')} className="font-bold">View All</Button>
-                </div>
-                <div className="p-4">
-                    {loading ? (
-                        <div className="p-12 text-center text-slate-500 font-medium">Loading your requests...</div>
-                    ) : requests.length > 0 ? (
-                        <table className="w-full text-left">
-                            <thead className="bg-slate-50/50 border-b border-slate-100">
-                                <tr>
-                                    <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Request Title</th>
-                                    <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Date</th>
-                                    <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-50">
+                        ) : requests.length > 0 ? (
+                            <div className="space-y-3">
                                 {requests.map(req => (
-                                    <tr key={req._id} className="hover:bg-slate-50/50 transition-colors">
-                                        <td className="px-6 py-5 font-bold text-slate-900">
-                                            {req.title}
-                                            {req.isMentorship && <span className="ml-2 px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[8px] font-black uppercase rounded">Mentorship</span>}
-                                        </td>
-                                        <td className="px-6 py-5 text-slate-500 font-medium">{new Date(req.createdAt).toLocaleDateString()}</td>
-                                        <td className="px-6 py-5">
-                                            <span className={cn(
-                                                "px-3 py-1.5 rounded-xl text-xs font-black uppercase",
-                                                (req.status === 'RESOLVED' || req.status === 'APPROVED' || req.status === 'COMPLETED') ? 'bg-emerald-100 text-emerald-700' :
-                                                    (req.status === 'REJECTED') ? 'bg-red-100 text-red-700' :
-                                                        (req.status === 'SCHEDULED' || req.status === 'IN_PROGRESS') ? 'bg-indigo-100 text-indigo-700' :
-                                                            'bg-amber-100 text-amber-700'
-                                            )}>
-                                                {req.status}
-                                            </span>
-                                        </td>
-                                    </tr>
+                                    <div key={req._id} className="p-6 rounded-[1.5rem] border border-slate-50 bg-slate-50/40 hover:bg-white hover:shadow-lg hover:border-orange-200 hover:-translate-y-0.5 transition-all group flex items-center justify-between">
+                                        <div className="flex items-center gap-5">
+                                            <div className="h-12 w-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 group-hover:text-orange-600 transition-colors shadow-sm">
+                                                {req.isMentorship ? <Users className="h-5 w-5" /> : <FileText className="h-5 w-5" />}
+                                            </div>
+                                            <div>
+                                                <h4 className="font-black text-slate-900 text-sm tracking-tight mb-1 group-hover:text-orange-600 transition-colors uppercase">{req.title}</h4>
+                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{new Date(req.createdAt).toDateString()}</p>
+                                            </div>
+                                        </div>
+                                        <span className={cn(
+                                            "px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border",
+                                            ['RESOLVED', 'APPROVED', 'COMPLETED'].includes(req.status) ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
+                                            req.status === 'REJECTED' ? 'bg-red-50 text-red-600 border-red-100' :
+                                            ['SCHEDULED', 'IN_PROGRESS'].includes(req.status) ? 'bg-orange-50 text-orange-600 border-orange-100 shadow-sm' :
+                                            'bg-amber-50 text-amber-600 border-amber-100'
+                                        )}>
+                                            {req.status.replace('_', ' ')}
+                                        </span>
+                                    </div>
                                 ))}
-                            </tbody>
-                        </table>
-                    ) : (
-                        <div className="p-12 text-center">
-                            <p className="text-slate-500 font-medium mb-4">No requests found</p>
-                            <Button onClick={() => setIsModalOpen(true)}>Create Your First Request</Button>
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            <div className="pt-6 pb-4">
-                <div className="h-px bg-slate-200 w-full mb-8"></div>
-                <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-slate-400">
-                    <div className="flex items-center gap-5">
-                        <div className="flex -space-x-3">
-                            {[1, 2, 3].map(i => (
-                                <div key={i} className="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-100 to-violet-100 border-2 border-white flex items-center justify-center text-indigo-600 font-black text-sm">
-                                    {i}
-                                </div>
-                            ))}
-                        </div>
-                        <p className="text-sm font-bold text-slate-600">
-                            <span className="text-2xl font-black text-slate-900">{stats.resolved + stats.pending}+</span> Total Requests Managed
-                        </p>
+                            </div>
+                        ) : (
+                            <div className="h-full flex flex-col items-center justify-center text-slate-400 opacity-50 p-10 text-center">
+                                <Target className="h-16 w-16 mb-4" />
+                                <p className="font-black text-sm uppercase tracking-widest">No activities recorded yet.</p>
+                                <p className="text-xs mt-2 uppercase tracking-tight">Submit your first request to see it here.</p>
+                            </div>
+                        )}
                     </div>
-                    <p className="text-xs font-bold uppercase tracking-widest">CampusConnect Student Portal v2.0</p>
+                </div>
+
+                <div className="space-y-8 flex flex-col">
+                    <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group flex-1">
+                        <div className="absolute top-0 right-0 p-10 opacity-[0.03] group-hover:rotate-12 transition-transform">
+                            <Target className="h-48 w-48" />
+                        </div>
+                        <h3 className="text-2xl font-black text-slate-900 tracking-tight leading-none flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-xl bg-orange-600 text-white flex items-center justify-center"><User className="h-5 w-5" /></div>
+                            Guardian Mentor
+                        </h3>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-3 mb-8 underline decoration-orange-600 decoration-2">Academic Advisory Bureau</p>
+                        
+                        <div className="flex items-center gap-6 p-6 bg-slate-50/50 rounded-[2rem] border border-slate-100 mb-8 mt-6">
+                            <div className="h-16 w-16 rounded-2xl bg-[#171317] flex items-center justify-center text-white font-black text-2xl shadow-xl">
+                                {assignedMentor?.name?.charAt(0) || 'M'}
+                            </div>
+                            <div>
+                                <h4 className="text-xl font-black text-slate-900 tracking-tight mb-1">{assignedMentor ? `Dr. ${assignedMentor.name}` : 'Awaiting Assignment'}</h4>
+                                <p className="text-[10px] font-black text-orange-600 uppercase tracking-widest">{assignedMentor?.designation || 'Expert Board'} • {assignedMentor?.department || 'University Center'}</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="p-5 bg-white border border-slate-100 rounded-2xl text-center">
+                                <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Response Rate</p>
+                                <p className="text-2xl font-black text-slate-900">98%</p>
+                            </div>
+                            <div className="p-5 bg-white border border-slate-100 rounded-2xl text-center">
+                                <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Mentor Rating</p>
+                                <p className="text-2xl font-black text-[#f4511e]">4.9</p>
+                            </div>
+                        </div>
+
+                        <Button
+                            className="w-full mt-8 py-6 rounded-2xl font-black uppercase tracking-widest text-[10px] bg-slate-900 text-white hover:bg-black transition-all shadow-xl"
+                            onClick={() => navigate('/dashboard/mentorship')}
+                        >
+                            {assignedMentor ? 'Launch Secure Message' : 'Request Assignment'}
+                        </Button>
+                    </div>
+
+                    <div className="bg-[#171317] p-10 rounded-[2.5rem] text-white relative overflow-hidden shadow-2xl h-fit">
+                        <div className="absolute top-0 right-0 w-[200px] h-[200px] bg-orange-600 rounded-full blur-[100px] -mr-24 -mt-24 opacity-30 shadow-orange-600/50"></div>
+                        <div className="relative z-10">
+                            <h3 className="text-xl font-black tracking-tight mb-4 flex items-center gap-3 uppercase">
+                                <Activity className="h-5 w-5 text-orange-600" />
+                                UniSupport Protocol
+                            </h3>
+                            <p className="text-xs font-medium text-slate-400 leading-relaxed uppercase tracking-wide">Your data is secured with institutional-grade encryption. Every request is tracked for accountability.</p>
+                            <div className="flex gap-4 mt-8">
+                                <div className="p-4 bg-white/5 rounded-2xl border border-white/10 flex-1 text-center">
+                                    <p className="text-[10px] font-black text-orange-400 uppercase tracking-widest">Efficiency</p>
+                                    <p className="text-lg font-black mt-1">92ms</p>
+                                </div>
+                                <div className="p-4 bg-white/5 rounded-2xl border border-white/10 flex-1 text-center">
+                                    <p className="text-[10px] font-black text-orange-400 uppercase tracking-widest">Uptime</p>
+                                    <p className="text-lg font-black mt-1">99.9%</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <NewRequestModal
                 isOpen={isModalOpen}
-                onClose={() => { setIsModalOpen(false); }}
-                onSuccess={() => { window.location.reload(); }}
+                onClose={() => { setIsModalOpen(false); fetchDashboardData(); }}
+                onCreated={() => { fetchDashboardData(); }}
             />
         </div>
     );
 };
+
+const FileText = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M13 13H8"/><path d="M13 17H8"/></svg>
+);
+
+const Users = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+);
 
 export default Overview;

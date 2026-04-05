@@ -27,13 +27,15 @@ const getDashboardStats = async (req, res) => {
         const pendingRequestsCount = await Request.countDocuments({ status: 'PENDING' });
         const totalFeedbackCount = await Feedback.countDocuments();
         const pendingMentorshipCount = await Mentorship.countDocuments({ status: 'PENDING' });
+        const pendingApprovalsCount = await User.countDocuments({ status: 'PENDING' });
 
         res.json({
             students: studentsCount,
             faculty: facultyCount,
             requests: pendingRequestsCount,
             feedback: totalFeedbackCount,
-            mentorship: pendingMentorshipCount
+            mentorship: pendingMentorshipCount,
+            pendingApprovals: pendingApprovalsCount
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -237,12 +239,32 @@ const updateUserStatus = async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
         if (user) {
-            user.isActive = req.body.isActive;
+            if (req.body.isActive !== undefined) user.isActive = req.body.isActive;
+            if (req.body.status) user.status = req.body.status;
+            
             await user.save();
-            await logAction(user.isActive ? 'ACTIVATE_USER' : 'DEACTIVATE_USER', req.user._id, user._id);
-            res.json({ message: 'Status updated' });
+            await logAction(
+                req.body.status === 'APPROVED' ? 'APPROVE_USER' : 
+                req.body.status === 'REJECTED' ? 'REJECT_USER' : 
+                user.isActive ? 'ACTIVATE_USER' : 'DEACTIVATE_USER', 
+                req.user._id, user._id
+            );
+            res.json({ message: 'User updated successfully', status: user.status });
+        } else {
+            res.status(404).json({ message: 'User not found' });
         }
     } catch (error) { res.status(500).json({ message: error.message }); }
+};
+
+// @desc    Get all users pending approval
+// @route   GET /api/admin/pending-approvals
+const getPendingUsers = async (req, res) => {
+    try {
+        const users = await User.find({ status: 'PENDING' }).select('-password').sort({ createdAt: -1 });
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 };
 
 const getFaculty = async (req, res) => {
@@ -272,6 +294,7 @@ export {
     assignMentor,
     getAuditLogs,
     getDashboardStats,
+    getPendingUsers,
     addFaculty,
     updateFaculty,
     deleteFaculty

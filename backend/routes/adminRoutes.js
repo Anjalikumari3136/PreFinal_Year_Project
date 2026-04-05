@@ -9,6 +9,7 @@ import {
     assignMentor,
     getAuditLogs,
     getDashboardStats,
+    getPendingUsers,
     addFaculty,
     updateFaculty,
     deleteFaculty
@@ -26,6 +27,7 @@ router.use(admin);
 router.get('/stats', getDashboardStats);
 router.get('/students', getStudents);
 router.get('/students/:id/full', getFullStudentProfile);
+router.get('/pending-approvals', getPendingUsers);
 router.put('/users/:id/status', updateUserStatus);
 router.put('/students/:id/mentor', assignMentor);
 

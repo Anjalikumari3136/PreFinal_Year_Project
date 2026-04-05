@@ -5,9 +5,13 @@ import {
     Calendar,
     ChevronLeft,
     Pin,
-    ArrowRight
+    ArrowRight,
+    TrendingUp,
+    Activity,
+    Shield
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { cn } from '../../utils/cn';
 
 const NoticeBoard = () => {
     const navigate = useNavigate();
@@ -18,7 +22,7 @@ const NoticeBoard = () => {
             title: 'JEE Mains Mock Test - Phase 1',
             date: 'Jan 10, 2026',
             category: 'Examination',
-            content: 'All students are required to be present by 9:00 AM. ID cards are mandatory.',
+            content: 'All students are required to be present by 9:00 AM. ID cards are mandatory for protocol validation.',
             priority: 'high'
         },
         {
@@ -26,7 +30,7 @@ const NoticeBoard = () => {
             title: 'Special Physics Workshop',
             date: 'Jan 08, 2026',
             category: 'Academic',
-            content: 'Dr. Verma will be conducting a deep-dive session on Quantum Mechanics.',
+            content: 'Dr. Verma will be conducting a deep-dive session on Quantum Mechanics and Relativity.',
             priority: 'medium'
         },
         {
@@ -34,73 +38,84 @@ const NoticeBoard = () => {
             title: 'Holiday Notice: Republic Day',
             date: 'Jan 26, 2026',
             category: 'Institute',
-            content: 'The institute will remain closed. Campus flag hoisting at 8:00 AM.',
+            content: 'The institute will remain closed. Campus flag hoisting at 8:00 AM for all staff and students.',
             priority: 'low'
         }
     ];
 
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100">
-                <div className="flex items-center gap-6">
+        <div className="space-y-10 animate-in fade-in duration-700">
+            
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 bg-white p-10 rounded-[3rem] shadow-xl border border-slate-100 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-orange-600/5 rounded-full blur-3xl -mr-16 -mt-16"></div>
+                <div className="flex items-center gap-8 relative z-10">
                     <button
                         onClick={() => navigate('/faculty-dashboard')}
-                        className="h-12 w-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 hover:text-[#00ff9d] hover:bg-[#00ff9d]/10 transition-all border border-slate-100"
+                        className="h-14 w-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 transition-all shadow-sm active:scale-95"
                     >
-                        <ChevronLeft className="h-6 w-6" />
+                        <ChevronLeft className="h-7 w-7" />
                     </button>
                     <div>
-                        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Notice Board</h1>
-                        <p className="text-slate-400 font-bold text-sm uppercase tracking-widest mt-1">Official Communications & Alerts</p>
+                        <h1 className="text-4xl font-black text-slate-900 tracking-tighter leading-none mb-2 uppercase italic underline decoration-orange-600 decoration-8 underline-offset-8">Bureau Notice</h1>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mt-3">Internal Communications & Governance Alerts</p>
                     </div>
                 </div>
-                <button className="bg-[#094d37] hover:bg-[#0c6348] text-white px-8 py-3 rounded-2xl font-black flex items-center gap-2 shadow-lg transition-all">
-                    <Megaphone className="h-5 w-5 text-[#00ff9d]" />
-                    POST NEW NOTICE
+                <button className="bg-slate-900 hover:bg-black text-white px-10 py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center gap-4 shadow-2xl transition-all active:scale-95 relative z-10 border border-white/5 shadow-orange-900/10 hover:-translate-y-0.5">
+                    <Megaphone className="h-5 w-5 text-orange-500" />
+                    BROADCAST NEW NOTICE
                 </button>
             </div>
 
-            {/* Sticky/Pinned Notice */}
-            <div className="bg-[#00b894] rounded-[3rem] p-10 text-white relative overflow-hidden shadow-2xl shadow-[#00b894]/20">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-                <div className="relative z-10 flex flex-col md:flex-row items-center gap-10">
-                    <div className="h-24 w-24 rounded-[2rem] bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20 shrink-0">
-                        <Pin className="h-12 w-12 text-white fill-white" />
+            <div className="bg-[#171317] rounded-[3.5rem] p-12 text-white relative overflow-hidden shadow-2xl group transition-all hover:shadow-orange-600/20">
+                <div className="absolute top-0 right-0 w-[500px] h-full bg-orange-600 rounded-full blur-[150px] opacity-[0.1] -mr-32 group-hover:opacity-20 transition-opacity"></div>
+                <div className="relative z-10 flex flex-col lg:flex-row items-center gap-12">
+                    <div className="h-28 w-28 rounded-[2.5rem] bg-orange-600 flex items-center justify-center shadow-2xl shadow-orange-600/30 shrink-0 group-hover:rotate-12 transition-transform">
+                        <Pin className="h-12 w-12 text-white" />
                     </div>
-                    <div className="space-y-4">
-                        <span className="px-4 py-1.5 bg-white/20 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/20">Pinned Announcement</span>
-                        <h2 className="text-4xl font-black tracking-tight">Annual Faculty Meet 2026</h2>
-                        <p className="text-white/80 font-medium text-lg leading-relaxed">Join us for the vision alignment meeting on Jan 15th at the Main Auditorium. Dinner will be served following the session.</p>
+                    <div className="space-y-6 flex-1">
+                        <div className="flex items-center gap-3">
+                            <span className="px-5 py-2 bg-white/10 backdrop-blur-xl rounded-full text-[9px] font-black uppercase tracking-[0.3em] border border-white/10 shadow-xl">Critical Priority Log</span>
+                            <span className="text-orange-500 font-bold text-[10px] uppercase tracking-widest flex items-center gap-2"><Activity className="h-3 w-3" /> System Live</span>
+                        </div>
+                        <h2 className="text-4xl md:text-5xl font-black tracking-tighter uppercase italic leading-none group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-orange-500 transition-all">Annual Faculty Board Meet 2026</h2>
+                        <p className="text-slate-400 font-black text-[10px] uppercase tracking-widest leading-relaxed max-w-2xl opacity-80 decoration-orange-600 underline underline-offset-8">Vision Alignment Protocol: Secure your presence for the strategic board session on Jan 15th at the Academic Center Core.</p>
                     </div>
-                    <button className="ml-auto p-6 bg-white text-slate-900 rounded-[2rem] font-black flex items-center gap-3 hover:scale-105 transition-transform group">
-                        SEE DETAILS <ArrowRight className="h-6 w-6 group-hover:translate-x-1 transition-transform" />
-                    </button>
                 </div>
             </div>
 
-            {/* List of Notices */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {notices.map((notice) => (
-                    <div key={notice.id} className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 group hover:shadow-xl transition-all h-[320px] flex flex-col">
-                        <div className="flex justify-between items-start mb-6">
-                            <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${notice.priority === 'high' ? 'bg-rose-50 text-rose-500 border-rose-100' :
-                                    notice.priority === 'medium' ? 'bg-amber-50 text-amber-500 border-amber-100' :
-                                        'bg-slate-50 text-slate-500 border-slate-100'
-                                }`}>
+                    <div key={notice.id} className="bg-white rounded-[3rem] p-10 shadow-sm border border-slate-100 group hover:shadow-2xl hover:border-orange-100 transition-all min-h-[380px] flex flex-col relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:rotate-12 transition-transform scale-150 rotate-12"><Bell className="h-32 w-32" /></div>
+                        <div className="flex justify-between items-start mb-8 relative z-10">
+                            <span className={cn(
+                                "px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border",
+                                notice.priority === 'high' ? 'bg-rose-50 text-rose-600 border-rose-100' :
+                                notice.priority === 'medium' ? 'bg-orange-50 text-orange-600 border-orange-100' :
+                                'bg-slate-50 text-slate-400 border-slate-100'
+                            )}>
                                 {notice.category}
                             </span>
-                            <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            <div className="flex items-center gap-2 text-[10px] font-black text-slate-300 uppercase tracking-tighter group-hover:text-slate-500 transition-colors">
                                 <Calendar className="h-4 w-4" /> {notice.date}
                             </div>
                         </div>
-                        <h3 className="text-xl font-black text-slate-900 mb-4 group-hover:text-[#00b894] transition-colors">{notice.title}</h3>
-                        <p className="text-slate-500 font-medium leading-relaxed">{notice.content}</p>
-                        <button className="mt-auto flex items-center gap-2 text-[10px] font-black text-[#00b894] uppercase tracking-widest hover:translate-x-2 transition-transform">
-                            READ FULL DOCUMENT →
+                        <div className="relative z-10 flex-1 space-y-6">
+                            <h3 className="text-2xl font-black text-slate-900 tracking-tight leading-none group-hover:text-orange-600 transition-all italic uppercase underline decoration-slate-50 decoration-4 underline-offset-4">{notice.title}</h3>
+                            <p className="text-slate-500 font-black text-[10px] uppercase tracking-widest leading-loose opacity-80">{notice.content}</p>
+                        </div>
+                        <button className="mt-10 flex items-center justify-between w-full p-4 bg-slate-50 rounded-2xl text-[9px] font-black text-slate-400 uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-sm relative z-10 group/btn">
+                             <span>Authorize Read Protocol</span>
+                             <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-2 transition-transform" />
                         </button>
                     </div>
                 ))}
+            </div>
+
+            <div className="bg-[#f8f9fa] border-2 border-dashed border-slate-200 rounded-[3rem] p-10 flex flex-col items-center justify-center text-center group">
+                 <div className="h-16 w-16 bg-white rounded-2xl flex items-center justify-center shadow-sm mb-4 group-hover:scale-110 transition-transform"><Shield className="h-8 w-8 text-orange-600" /></div>
+                 <h4 className="text-xl font-black text-slate-800 tracking-tight uppercase italic leading-none mb-2">Bureau Confidentiality Protocol</h4>
+                 <p className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.25em] max-w-[400px] leading-relaxed italic opacity-80">System Alert: Official notices are for academic faculty and staff eyes only. Unauthorized duplication is a protocol violation.</p>
             </div>
         </div>
     );

@@ -12,6 +12,14 @@ const authUser = async (req, res) => {
         const user = await User.findOne({ email });
 
         if (user && (await user.matchPassword(password))) {
+            if (user.status !== 'APPROVED' && user.role !== 'ADMIN') {
+                return res.status(403).json({ 
+                    message: user.status === 'REJECTED' 
+                        ? 'Your registration was rejected by the administrator.' 
+                        : 'Your account is pending administrator approval.' 
+                });
+            }
+
             res.json({
                 _id: user._id,
                 name: user.name,
@@ -58,7 +66,8 @@ const registerUser = async (req, res) => {
             studentId,
             otp: generatedOTP,
             otpExpires,
-            isVerified: false
+            isVerified: false,
+            status: (role === 'ADMIN') ? 'APPROVED' : 'PENDING'
         });
 
         if (user) {

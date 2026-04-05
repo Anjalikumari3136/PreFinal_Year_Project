@@ -7,7 +7,7 @@ const AdminLayout = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(false);
 
     return (
-        <div className="min-h-screen bg-slate-100 flex font-sans text-slate-900">
+        <div className="min-h-screen bg-[#f8f9fa] flex font-sans text-slate-900">
             <AdminSidebar isOpen={isSidebarOpen} setIsOpen={setSidebarOpen} />
 
             <main className="flex-1 flex flex-col min-w-0 overflow-hidden">

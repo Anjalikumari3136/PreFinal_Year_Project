@@ -21,6 +21,7 @@ import NewRequestModal from '../../components/dashboard/NewRequestModal';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../../utils/cn';
+import API_BASE_URL from '../../config/api';
 
 const Overview = () => {
     const { user } = useAuth();
@@ -49,9 +50,9 @@ const Overview = () => {
             try {
                 const config = { headers: { Authorization: `Bearer ${user.token}` } };
                 const [reqRes, profileRes, mentorRes] = await Promise.allSettled([
-                    axios.get('https://prefinal-year-project.onrender.com/api/requests', config),
-                    axios.get('https://prefinal-year-project.onrender.com/api/auth/profile', config),
-                    axios.get('https://prefinal-year-project.onrender.com/api/mentorship/my-requests', config)
+                    axios.get(`${API_BASE_URL}/api/requests`, config),
+                    axios.get(`${API_BASE_URL}/api/auth/profile`, config),
+                    axios.get(`${API_BASE_URL}/api/mentorship/my-requests`, config)
                 ]);
 
                 let pCount = 0;
@@ -90,16 +91,16 @@ const Overview = () => {
     }, [user]);
 
     const cards = [
-        { label: 'Attendance', value: stats.attendance, icon: Calendar, color: 'text-emerald-500', bg: 'bg-emerald-50', sub: 'Live Presence' },
-        { label: 'Academic CGPA', value: stats.cgpa, icon: Award, color: 'text-orange-500', bg: 'bg-orange-50', sub: 'Univ. Ranking' },
-        { label: 'Support Reqs', value: stats.resolved, icon: Shield, color: 'text-blue-500', bg: 'bg-blue-50', sub: 'Resolved Total' },
+        { label: 'Pending Requests', value: stats.pending, icon: Clock, color: 'text-amber-500', bg: 'bg-amber-50', sub: 'Action Required' },
+        { label: 'Resolved Tickets', value: stats.resolved, icon: CheckCircle, color: 'text-emerald-500', bg: 'bg-emerald-50', sub: 'Successfully Closed' },
+        { label: 'Total Submissions', value: stats.pending + stats.resolved, icon: FileText, color: 'text-blue-500', bg: 'bg-blue-50', sub: 'Your Global Log' },
     ];
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
             
-            <div className="relative bg-gradient-to-r from-[#171317] to-[#2d1b18] rounded-[2.5rem] p-10 md:p-12 text-white overflow-hidden shadow-2xl group">
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-600 rounded-full -mr-48 -mt-48 blur-[120px] opacity-20 group-hover:opacity-30 transition-opacity"></div>
+            <div className="relative bg-gradient-to-r from-[#171317] to-[#2d1b18] rounded-[1.5rem] p-6 md:p-8 text-white overflow-hidden shadow-2xl group">
+                <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-orange-600 rounded-full -mr-24 -mt-24 blur-[80px] opacity-20 group-hover:opacity-30 transition-opacity"></div>
                 
                 <div className="relative z-10 flex flex-col xl:flex-row xl:items-center justify-between gap-10">
                     <div className="space-y-4">
@@ -109,7 +110,7 @@ const Overview = () => {
                             </span>
                             <span className="text-slate-400 font-bold text-[10px] uppercase tracking-widest">{currentDate}</span>
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-black tracking-tighter leading-tight">
+                        <h1 className="text-2xl md:text-3xl font-black tracking-tighter leading-tight">
                             Namaste Student,<br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">{user?.name || 'Academic Scholar'}</span> 👋
                         </h1>
@@ -121,36 +122,36 @@ const Overview = () => {
                     <div className="flex flex-wrap gap-4 shrink-0">
                         <button
                             onClick={() => setIsModalOpen(true)}
-                            className="bg-white text-slate-900 rounded-[1.5rem] px-8 py-5 flex items-center gap-4 shadow-2xl hover:scale-[1.03] transition-all group/btn h-fit"
+                            className="bg-white text-slate-900 rounded-xl px-5 py-3 flex items-center gap-3 shadow-2xl hover:scale-[1.03] transition-all group/btn h-fit"
                         >
-                            <div className="h-12 w-12 rounded-xl bg-orange-600 flex items-center justify-center text-white shadow-lg shadow-orange-600/20 group-hover/btn:rotate-12 transition-transform">
-                                <MessageSquare className="h-6 w-6" />
+                            <div className="h-9 w-9 rounded-lg bg-orange-600 flex items-center justify-center text-white shadow-lg shadow-orange-600/20 group-hover/btn:rotate-12 transition-transform">
+                                <MessageSquare className="h-4 w-4" />
                             </div>
                             <div className="text-left font-black leading-none">
-                                <p className="text-[9px] text-slate-400 uppercase tracking-widest mb-1">New Action</p>
-                                <p className="text-lg uppercase tracking-tighter">Submit Request</p>
+                                <p className="text-[7px] text-slate-400 uppercase tracking-widest mb-1">New Action</p>
+                                <p className="text-sm uppercase tracking-tighter">Submit Request</p>
                             </div>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 {cards.map((c, i) => (
-                    <div key={i} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-500 group relative overflow-hidden">
-                        <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center mb-6 shadow-lg transition-transform group-hover:scale-110", c.bg, c.color)}>
-                            <c.icon className="h-6 w-6" />
+                    <div key={i} className="bg-white p-6 rounded-[1.5rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-500 group relative overflow-hidden">
+                        <div className={cn("h-12 w-12 rounded-xl flex items-center justify-center mb-5 shadow-lg transition-transform group-hover:scale-110", c.bg, c.color)}>
+                            <c.icon className="h-5 w-5" />
                         </div>
                         <div className="relative z-10">
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{c.label}</p>
+                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">{c.label}</p>
                             <div className="flex items-baseline gap-2">
-                                <h3 className="text-4xl font-black text-slate-900 tracking-tighter">{c.value}</h3>
-                                <ArrowUpRight className={cn("h-4 w-4", c.color)} />
+                                <h3 className="text-3xl font-black text-slate-900 tracking-tighter">{c.value}</h3>
+                                <ArrowUpRight className={cn("h-3 w-3", c.color)} />
                             </div>
-                            <p className="text-[9px] font-bold text-slate-400 mt-2 uppercase tracking-widest">{c.sub}</p>
+                            <p className="text-[8px] font-bold text-slate-400 mt-1.5 uppercase tracking-widest">{c.sub}</p>
                         </div>
-                        <div className={cn("absolute bottom-0 right-0 p-8 opacity-[0.03] transition-transform group-hover:scale-125 group-hover:rotate-12", c.color)}>
-                            <c.icon className="h-24 w-24" />
+                        <div className={cn("absolute bottom-0 right-0 p-6 opacity-[0.03] transition-transform group-hover:scale-125 group-hover:rotate-12", c.color)}>
+                            <c.icon className="h-20 w-20" />
                         </div>
                     </div>
                 ))}
@@ -180,11 +181,11 @@ const Overview = () => {
             )}
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
-                    <div className="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
+                <div className="bg-white rounded-[1.5rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col min-h-[400px]">
+                    <div className="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
                         <div>
-                            <h3 className="text-2xl font-black text-slate-900 tracking-tight leading-none">Recent Activity</h3>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2 underline decoration-orange-600 decoration-2">Last 5 Transactions</p>
+                            <h3 className="text-xl font-black text-slate-900 tracking-tight leading-none">Recent Activity</h3>
+                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1.5 underline decoration-orange-600 decoration-2">Last 5 Transactions</p>
                         </div>
                         <Button variant="ghost" className="text-[10px] font-black uppercase tracking-widest hover:bg-slate-100 rounded-xl" onClick={() => navigate('/dashboard/requests')}>
                             See Global Log

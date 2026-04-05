@@ -180,20 +180,31 @@ const Register = () => {
                                                 className="w-full pl-11 pr-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:ring-8 focus:ring-orange-500/5 focus:border-orange-400/50 outline-none transition-all text-[13px] font-bold text-slate-900 cursor-pointer appearance-none"
                                                 required
                                             >
-                                                <option value="" disabled>Select Department</option>
-                                                <option value="Computer Science">Computer Science</option>
-                                                <option value="Engineering">Engineering & Technology</option>
-                                                <option value="Business Management">Business Management</option>
-                                                <option value="EXAMINATION">Examination Department</option>
-                                                <option value="REGISTRAR">Registrar / Documentation</option>
-                                                <option value="FEES">Fees & Accounts Office</option>
-                                                <option value="PLACEMENT">Career & Placements</option>
-                                                <option value="LIBRARY">Central Library Services</option>
-                                                <option value="HOSTEL">Hostel Management</option>
-                                                <option value="SPORTS">Sports & Athletics Bureau</option>
-                                                <option value="TRANSPORT">Transport & Logistics</option>
-                                                <option value="DEAN_OFFICE">Office of the Dean</option>
-                                                <option value="ADMINISTRATIVE">Administrative Office</option>
+                                                <option value="" disabled>Select {role === 'STUDENT' ? 'Academic Department' : 'Office / Unit'}</option>
+                                                
+                                                {role === 'STUDENT' ? (
+                                                    // Student Academic Departments
+                                                    <>
+                                                        <option value="Computer Science & Engineering">Computer Science & Engineering</option>
+                                                        <option value="Business Management">Business Management</option>
+                                                        <option value="Social Sciences">Social Sciences</option>
+                                                        <option value="Arts & Humanities">Arts & Humanities</option>
+                                                    </>
+                                                ) : (
+                                                    // Faculty / Admin Offices
+                                                    <>
+                                                        <option value="EXAMINATION">Examination Department</option>
+                                                        <option value="REGISTRAR">Registrar / Documentation</option>
+                                                        <option value="FEES">Fees & Accounts Office</option>
+                                                        <option value="PLACEMENT">Career & Placements</option>
+                                                        <option value="LIBRARY">Central Library Services</option>
+                                                        <option value="HOSTEL">Hostel Management</option>
+                                                        <option value="SPORTS">Sports & Athletics Bureau</option>
+                                                        <option value="TRANSPORT">Transport & Logistics</option>
+                                                        <option value="DEAN_OFFICE">Office of the Dean</option>
+                                                        <option value="ADMINISTRATIVE">Administrative Office</option>
+                                                    </>
+                                                )}
                                             </select>
                                         </div>
                                     </div>

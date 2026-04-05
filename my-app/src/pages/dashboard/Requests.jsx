@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 import NewRequestModal from '../../components/dashboard/NewRequestModal';
+import API_BASE_URL from '../../config/api';
 
 const RequestDetailsModal = ({ isOpen, onClose, request }) => {
     if (!isOpen || !request) return null;
@@ -94,7 +95,7 @@ const Requests = () => {
         setLoading(true);
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get('https://prefinal-year-project.onrender.com/api/requests', config);
+            const { data } = await axios.get(`${API_BASE_URL}/api/requests`, config);
             setRequests(data);
         } catch (error) { toast.error('Failed to load requests'); }
         finally { setLoading(false); }

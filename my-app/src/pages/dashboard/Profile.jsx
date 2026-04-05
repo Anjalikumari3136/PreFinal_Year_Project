@@ -10,6 +10,7 @@ import { Button } from '../../components/common/Button';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import API_BASE_URL from '../../config/api';
 
 const Profile = () => {
     const { user, updateUserData } = useAuth();
@@ -83,7 +84,7 @@ const Profile = () => {
             };
 
             const { data } = await axios.put(
-                'https://prefinal-year-project.onrender.com/api/users/profile',
+                `${API_BASE_URL}/api/users/profile`,
                 updatePayload,
                 config
             );

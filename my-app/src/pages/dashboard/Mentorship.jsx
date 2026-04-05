@@ -23,6 +23,7 @@ import { cn } from '../../utils/cn';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
+import API_BASE_URL from '../../config/api';
 
 const Mentorship = () => {
     const { user } = useAuth();
@@ -43,8 +44,8 @@ const Mentorship = () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
             const [facultyRes, requestsRes] = await Promise.all([
-                axios.get('https://prefinal-year-project.onrender.com/api/mentorship/faculty', config),
-                axios.get('https://prefinal-year-project.onrender.com/api/mentorship/my-requests', config)
+                axios.get(`${API_BASE_URL}/api/mentorship/faculty`, config),
+                axios.get(`${API_BASE_URL}/api/mentorship/my-requests`, config)
             ]);
             setFacultyList(facultyRes.data);
             setMyRequests(requestsRes.data);
@@ -58,7 +59,7 @@ const Mentorship = () => {
         setSubmitting(true);
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.post('https://prefinal-year-project.onrender.com/api/mentorship/request', {
+            await axios.post(`${API_BASE_URL}/api/mentorship/request`, {
                 mentorId: selectedFaculty._id,
                 message: requestMessage
             }, config);

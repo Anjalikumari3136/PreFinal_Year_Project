@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Loader2 } from 'lucide-react';
 import axios from 'axios';
+import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 import { Button } from '../common/Button';
 import API_BASE_URL from '../../config/api';

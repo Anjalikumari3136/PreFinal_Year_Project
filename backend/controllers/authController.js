@@ -67,7 +67,7 @@ const registerUser = async (req, res) => {
             otp: generatedOTP,
             otpExpires,
             isVerified: false,
-            status: (role === 'ADMIN') ? 'APPROVED' : 'PENDING'
+            status: (role === 'FACULTY') ? 'PENDING' : 'APPROVED'
         });
 
         if (user) {
@@ -142,4 +142,77 @@ const verifyOTP = async (req, res) => {
     }
 };
 
-export { authUser, registerUser, verifyOTP };
+// @desc    Request password reset (Sends OTP)
+// @route   POST /api/auth/forgot-password
+// @access  Public
+const forgotPassword = async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Generate 6-digit OTP
+        const generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+        const otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+
+        user.otp = generatedOTP;
+        user.otpExpires = otpExpires;
+        await user.save();
+
+        // Send Email
+        await sendEmail({
+            email: user.email,
+            name: user.name,
+            subject: 'Reset Your Password - Campus Connect OTP',
+            htmlContent: `
+                <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; max-width: 600px;">
+                    <h2>Password Reset Request</h2>
+                    <p>Hi ${user.name},</p>
+                    <p>Use the following OTP to reset your password:</p>
+                    <div style="background: #f4f4f4; padding: 15px; font-size: 24px; font-weight: bold; text-align: center; border-radius: 5px;">
+                        ${generatedOTP}
+                    </div>
+                    <p>This OTP is valid for 10 minutes.</p>
+                </div>
+            `
+        });
+
+        res.json({ message: 'Reset OTP sent to your email' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Reset password with OTP
+// @route   POST /api/auth/reset-password
+// @access  Public
+const resetPassword = async (req, res) => {
+    const { email, otp, newPassword } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (user.otp === otp && user.otpExpires > Date.now()) {
+            user.password = newPassword; // Middleware will hash it
+            user.otp = undefined;
+            user.otpExpires = undefined;
+            await user.save();
+
+            res.json({ message: 'Password reset successful! You can now log in.' });
+        } else {
+            res.status(400).json({ message: 'Invalid or expired OTP' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export { authUser, registerUser, verifyOTP, forgotPassword, resetPassword };

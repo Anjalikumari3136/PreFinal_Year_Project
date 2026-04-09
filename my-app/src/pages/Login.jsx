@@ -1,276 +1,326 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate, Link } from 'react-router-dom';
-import { Button } from '../components/common/Button';
-import { Mail, Lock, Loader2, GraduationCap, ShieldCheck, BookOpen, ArrowLeft, KeyRound, CheckCircle2, X } from 'lucide-react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { 
+    User, 
+    Lock, 
+    Mail, 
+    Loader2, 
+    ArrowLeft,
+    GraduationCap,
+    BookOpen,
+    ShieldCheck,
+    ArrowRight,
+    Hash,
+    Building2,
+    Sparkles,
+    Shield
+} from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import toast from 'react-hot-toast';
-import API_BASE_URL from '../config/api';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
+import toast from 'react-hot-toast';
 
-const Login = () => {
+const Auth = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const { login } = useAuth();
+    
+    const [isLogin, setIsLogin] = useState(location.pathname === '/login');
     const [isLoading, setIsLoading] = useState(false);
-    const [role, setRole] = useState('student'); // Default role
-    const [formData, setFormData] = useState({ email: '', password: '' });
-    const [showForgotModal, setShowForgotModal] = useState(false);
-    const [forgotStep, setForgotStep] = useState(1); // 1: Email, 2: OTP & New Password
-    const [forgotData, setForgotData] = useState({ email: '', otp: '', newPassword: '' });
-    const [forgotLoading, setForgotLoading] = useState(false);
-
-    const roles = [
-        { id: 'student', label: 'STUDENT', icon: GraduationCap, color: 'text-orange-500', bg: 'bg-orange-50' },
-        { id: 'faculty', label: 'TEACHER', icon: BookOpen, color: 'text-blue-500', bg: 'bg-blue-50' },
-        { id: 'admin', label: 'ADMIN', icon: ShieldCheck, color: 'text-slate-500', bg: 'bg-slate-50' }
+    const [role, setRole] = useState('STUDENT'); 
+    
+    const academicDepartments = [
+        "Computer Science",
+        "Information Technology",
+        "Electronics & Communication",
+        "Mechanical Engineering",
+        "Civil Engineering",
+        "Business Administration",
+        "Arts & Science"
     ];
 
-    const currentRoleLabel = roles.find(r => r.id === role)?.label || 'USER';
+    const facultyUnits = [
+        "Select Office / Unit",
+        "Examination Department",
+        "Registrar / Documentation",
+        "Fees & Accounts Office",
+        "Career & Placements",
+        "Central Library Services",
+        "Hostel Management",
+        "Sports & Athletics Bureau",
+        "Transport & Logistics",
+        "Office of the Dean",
+        "Administrative Office"
+    ];
+
+    const currentDepts = (role === 'FACULTY' || role === 'ADMIN') ? facultyUnits : academicDepartments;
+
+    useEffect(() => {
+        setIsLogin(location.pathname === '/login');
+        if (location.pathname === '/register') setRole('STUDENT');
+    }, [location.pathname]);
+
+    const toggleMode = () => {
+        const newPath = isLogin ? '/register' : '/login';
+        navigate(newPath);
+    };
 
     const handleLogin = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-        const res = await login(formData.email, formData.password);
+        const email = e.target.email.value;
+        const password = e.target.password.value;
+        const res = await login(email, password);
         if (res.success) {
+            toast.success(`Welcome back, ${res.role}`);
             if (res.role === 'ADMIN') navigate('/admin-dashboard');
             else if (res.role === 'FACULTY') navigate('/faculty-dashboard');
             else navigate('/dashboard');
         } else {
-            alert(res.error || 'Login failed');
+            toast.error(res.message || 'Authentication failed');
         }
         setIsLoading(false);
     };
 
-    const handleForgotRequest = async (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
-        setForgotLoading(true);
+        setIsLoading(true);
+        const data = {
+            name: e.target.name.value,
+            studentId: e.target.idField.value,
+            email: e.target.email.value,
+            password: e.target.password.value,
+            department: e.target.department.value,
+            role: role
+        };
         try {
-            await axios.post(`${API_BASE_URL}/api/auth/forgot-password`, { email: forgotData.email });
-            toast.success('Reset OTP sent to your email');
-            setForgotStep(2);
+            await axios.post(`${API_BASE_URL}/api/auth/register`, data);
+            toast.success('Account created successfully');
+            navigate('/login');
         } catch (error) {
-            toast.error(error.response?.data?.message || 'Failed to send OTP');
+            toast.error(error.response?.data?.message || 'Registration failed');
         }
-        setForgotLoading(false);
+        setIsLoading(false);
     };
 
-    const handleResetSubmit = async (e) => {
-        e.preventDefault();
-        setForgotLoading(true);
-        try {
-            await axios.post(`${API_BASE_URL}/api/auth/reset-password`, forgotData);
-            toast.success('Password reset successful! Please log in.');
-            setShowForgotModal(false);
-            setForgotStep(1);
-            setForgotData({ email: '', otp: '', newPassword: '' });
-        } catch (error) {
-            toast.error(error.response?.data?.message || 'Reset failed');
-        }
-        setForgotLoading(false);
-    };
+    const loginRoles = [
+        { id: 'STUDENT', label: 'Student', icon: GraduationCap },
+        { id: 'FACULTY', label: 'Faculty', icon: BookOpen },
+        { id: 'ADMIN', label: 'Admin', icon: ShieldCheck }
+    ];
+
+    const registerRoles = [
+        { id: 'STUDENT', label: 'Student', icon: GraduationCap },
+        { id: 'FACULTY', label: 'Faculty', icon: BookOpen }
+    ];
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-white relative overflow-hidden font-sans">
-            {/* Decorative Background Pattern */}
-            <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute -top-16 -left-16 w-72 h-72 rounded-full bg-indigo-100/40 blur-3xl" />
-                <div className="absolute -bottom-16 -right-16 w-80 h-80 rounded-full bg-fuchsia-100/40 blur-3xl" />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.75),transparent_65%)]" />
+        <div className="min-h-screen bg-[#010714] flex items-center justify-center p-4 font-sans overflow-hidden">
+            {/* Ultra-Vibrant Background Glows */}
+            <div className="fixed inset-0 z-0">
+                <motion.div 
+                    animate={{ 
+                        scale: [1, 1.2, 1],
+                        opacity: [0.3, 0.5, 0.3] 
+                    }}
+                    transition={{ duration: 10, repeat: Infinity }}
+                    className="absolute top-[-15%] left-[-10%] w-[60%] h-[60%] bg-cyan-500/10 blur-[130px] rounded-full" 
+                />
+                <motion.div 
+                    animate={{ 
+                        scale: [1.2, 1, 1.2],
+                        opacity: [0.3, 0.5, 0.3] 
+                    }}
+                    transition={{ duration: 12, repeat: Infinity }}
+                    className="absolute bottom-[-15%] right-[-10%] w-[60%] h-[60%] bg-blue-600/10 blur-[130px] rounded-full" 
+                />
             </div>
 
-            <Link to="/" className="fixed top-8 left-8 flex items-center gap-2 text-white/80 hover:text-white transition-colors font-bold uppercase tracking-widest text-xs">
-                <ArrowLeft className="h-4 w-4" /> HOME
+            <Link to="/" className="fixed top-10 left-10 z-50 flex items-center gap-3 text-slate-400 hover:text-cyan-400 transition-all group text-[11px] font-black uppercase tracking-[0.2em] italic">
+                <div className="p-2 bg-white/5 rounded-xl border border-white/10 group-hover:border-cyan-400 transition-all">
+                    <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+                </div>
+                Return Home
             </Link>
 
-            <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="w-full max-w-sm bg-white border border-slate-200 rounded-[2.5rem] shadow-2xl p-6 md:p-8 relative"
-            >
-                {/* Logo Area */}
-                <div className="flex flex-col items-center mb-6">
-                    <div className="w-20 h-20 rounded-full border border-orange-200 p-1 flex items-center justify-center bg-white shadow-lg mb-5">
-                        <div className="w-full h-full rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white shadow-inner">
-                            <div className="bg-white p-2 rounded-full">
-                                <GraduationCap className="h-8 w-8 text-orange-600" />
-                            </div>
+            <div className={`relative w-full shadow-[0_40px_100px_rgba(0,0,0,0.8)] overflow-hidden flex border border-white/10 transition-all duration-700 bg-slate-900/40 backdrop-blur-3xl ${isLogin ? 'max-w-[880px] h-[600px] rounded-[2.5rem]' : 'max-w-[980px] h-[720px] rounded-[3.5rem]'}`}>
+                
+                {/* Diagonal Sliding Panel - Glass Gradient */}
+                <motion.div 
+                    initial={false}
+                    animate={{ x: isLogin ? '100%' : '0%' }}
+                    transition={{ type: "spring", stiffness: 70, damping: 20 }}
+                    className="absolute top-0 left-0 w-1/2 h-full z-20 hidden md:block overflow-hidden"
+                >
+                    <div className="h-full w-full bg-gradient-to-br from-cyan-400 via-blue-600 to-indigo-800 relative">
+                        {/* High-End Glass Ripple */}
+                        <div className="absolute inset-0 opacity-20 pointer-events-none overflow-hidden">
+                            <div className="absolute top-[-20%] left-[-20%] w-[100%] h-[100%] border-[2px] border-white/20 rounded-full animate-ping duration-[10s]" />
                         </div>
-                    </div>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tighter">PORTAL LOGIN</h1>
-                </div>
-
-                {/* Role Selection Icons */}
-                <div className="flex justify-center gap-4 mb-6">
-                    {roles.map((r) => (
-                        <div key={r.id} className="flex flex-col items-center gap-2">
-                            <button
-                                onClick={() => setRole(r.id)}
-                                className={`w-16 h-16 rounded-[1.5rem] flex items-center justify-center transition-all duration-300 ${role === r.id
-                                    ? 'bg-white border-4 border-orange-500 shadow-xl scale-110'
-                                    : 'bg-slate-50 border border-slate-200 hover:bg-slate-100'
-                                    }`}
-                            >
-                                <r.icon className={`h-8 w-8 ${role === r.id ? 'text-orange-500' : 'text-slate-400'}`} />
-                            </button>
-                            <span className={`text-[10px] font-black tracking-widest ${role === r.id ? 'text-orange-600' : 'text-slate-500'}`}>
-
-                                {r.label}
-                            </span>
-                        </div>
-                    ))}
-                </div>
-
-                {/* Dynamic Sign-In Text */}
-                <div className="text-center mb-6">
-                        <p className="text-sm font-black text-slate-700 uppercase tracking-widest">
-                            SIGN IN AS <span className="text-orange-600">{currentRoleLabel}</span>
-                        </p>
-                </div>
-
-                {/* Form Fields */}
-                <form onSubmit={handleLogin} className="space-y-6">
-                    <div className="relative">
-                        <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" />
-                        <input
-                            type="email"
-                            className="w-full pl-14 pr-6 py-5 bg-slate-50 border border-slate-200 rounded-[2rem] focus:outline-none focus:ring-4 focus:ring-orange-500/20 transition-all font-bold text-slate-900 placeholder:text-slate-400"
-                            placeholder="Email Address"
-                            value={formData.email}
-                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                            required
+                        
+                        <div 
+                            className="absolute inset-0 z-10"
+                            style={{
+                                background: 'rgba(255,255,255,0.03)',
+                                clipPath: 'polygon(0 0, 100% 0, 88% 100%, 0% 100%)'
+                            }}
                         />
-                    </div>
-
-                    <div className="relative">
-                        <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" />
-                        <input
-                            type="password"
-                            className="w-full pl-14 pr-6 py-5 bg-slate-50 border border-slate-200 rounded-[2rem] focus:outline-none focus:ring-4 focus:ring-orange-500/20 transition-all font-bold text-slate-900 placeholder:text-slate-400"
-                            placeholder="Password"
-
-                            value={formData.password}
-                            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                            required
-                        />
-                    </div>
-
-                    <Button
-                        type="submit"
-                        disabled={isLoading}
-                        className="w-full py-5 text-lg bg-gradient-to-r from-orange-500 to-black hover:opacity-90 transition-all font-black rounded-[2rem] shadow-xl text-white tracking-widest mt-3 uppercase"
-                    >
-                        {isLoading ? <Loader2 className="h-6 w-6 animate-spin mx-auto" /> : 'SIGN IN NOW'}
-                    </Button>
-                </form>
-
-                <div className="mt-10 flex items-center justify-between px-2">
-                    <Link to="/register" className="text-[11px] font-black text-slate-500 hover:text-slate-800 transition-colors uppercase tracking-widest">
-                        NEW {currentRoleLabel}? REGISTER
-                    </Link>
-                    <button 
-                        type="button"
-                        onClick={() => setShowForgotModal(true)}
-                        className="text-[11px] font-black text-slate-500 hover:text-slate-800 transition-colors uppercase tracking-widest"
-                    >
-                        FORGOT PASSWORD?
-                    </button>
-                </div>
-
-                {/* Forgot Password Modal */}
-                <AnimatePresence>
-                    {showForgotModal && (
-                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xl">
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                                animate={{ opacity: 1, scale: 1, y: 0 }}
-                                exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                                className="w-full max-w-md bg-white rounded-[2.5rem] shadow-3xl border border-slate-100 overflow-hidden"
-                            >
-                                <div className="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
-                                    <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-orange-100 rounded-xl">
-                                            <KeyRound className="h-5 w-5 text-orange-600" />
-                                        </div>
-                                        <h3 className="text-xl font-black text-slate-900 tracking-tight">PASSWORD RECOVERY</h3>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-14 text-white z-20">
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={isLogin}
+                                    initial={{ opacity: 0, scale: 0.85, y: 10 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.85, y: -10 }}
+                                    className="flex flex-col items-center"
+                                >
+                                    <div className="p-4 bg-white/10 backdrop-blur-md rounded-3xl border border-white/20 mb-8 shadow-2xl">
+                                        <Sparkles className="h-8 w-8 text-cyan-300" />
                                     </div>
-                                    <button onClick={() => setShowForgotModal(false)} className="p-2 hover:bg-white rounded-full text-slate-400">
-                                        <X className="h-5 w-5" />
+                                    <h2 className="text-5xl font-black tracking-tight mb-4 drop-shadow-2xl">
+                                        {isLogin ? "Welcome Back" : "Join The Elite"}
+                                    </h2>
+                                    <div className="h-1.5 w-16 bg-gradient-to-r from-cyan-300 to-white rounded-full mb-8 shadow-[0_0_15px_rgba(34,211,238,0.5)]" />
+                                    <p className="text-white/80 text-sm font-semibold max-w-[260px] mb-12 leading-relaxed tracking-wide">
+                                        {isLogin ? "Institutional Access Node V4.0. Secure authentication protocol active." : "Create your unique identity node within the campus network."}
+                                    </p>
+                                    <button 
+                                        onClick={toggleMode}
+                                        className="px-12 py-4 bg-white/10 hover:bg-white text-white hover:text-blue-700 border-2 border-white/30 rounded-2xl font-black text-sm transition-all active:scale-95 shadow-2xl backdrop-blur-md uppercase tracking-widest"
+                                    >
+                                        {isLogin ? "Create Account" : "Access Portal"}
                                     </button>
-                                </div>
-
-                                <div className="p-8">
-                                    {forgotStep === 1 ? (
-                                        <form onSubmit={handleForgotRequest} className="space-y-6">
-                                            <div>
-                                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Enter your registered email to receive an OTP</p>
-                                                <div className="relative">
-                                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
-                                                    <input 
-                                                        type="email" 
-                                                        required
-                                                        placeholder="you@email.com"
-                                                        value={forgotData.email}
-                                                        onChange={e => setForgotData({...forgotData, email: e.target.value})}
-                                                        className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-orange-500/10 outline-none text-sm font-bold"
-                                                    />
-                                                </div>
-                                            </div>
-                                            <Button disabled={forgotLoading} className="w-full py-4 rounded-2xl bg-slate-900 hover:bg-black text-white font-black text-xs tracking-widest uppercase">
-                                                {forgotLoading ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : 'SEND RESET CODE'}
-                                            </Button>
-                                        </form>
-                                    ) : (
-                                        <form onSubmit={handleResetSubmit} className="space-y-6">
-                                            <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100 flex items-center gap-3 mb-4">
-                                                <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
-                                                <p className="text-[10px] font-black text-emerald-700 uppercase tracking-wider leading-relaxed">OTP has been sent to your email. Check your inbox.</p>
-                                            </div>
-
-                                            <div className="space-y-4">
-                                                <input 
-                                                    type="text" 
-                                                    required
-                                                    placeholder="6-Digit OTP Code"
-                                                    maxLength={6}
-                                                    value={forgotData.otp}
-                                                    onChange={e => setForgotData({...forgotData, otp: e.target.value})}
-                                                    className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-orange-500/10 outline-none text-center text-lg font-black tracking-[0.5em]"
-                                                />
-                                                <input 
-                                                    type="password" 
-                                                    required
-                                                    placeholder="New Secure Password"
-                                                    value={forgotData.newPassword}
-                                                    onChange={e => setForgotData({...forgotData, newPassword: e.target.value})}
-                                                    className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-orange-500/10 outline-none text-sm font-bold"
-                                                />
-                                            </div>
-                                            <Button disabled={forgotLoading} className="w-full py-4 rounded-2xl bg-orange-600 hover:bg-orange-700 text-white font-black text-xs tracking-widest uppercase">
-                                                {forgotLoading ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : 'UPDATE PASSWORD'}
-                                            </Button>
-                                            <button 
-                                                type="button" 
-                                                onClick={() => setForgotStep(1)}
-                                                className="w-full text-[10px] font-black text-slate-400 hover:text-slate-600 uppercase tracking-widest transition-colors"
-                                            >
-                                                Back to Email
-                                            </button>
-                                        </form>
-                                    )}
-                                </div>
-                            </motion.div>
+                                </motion.div>
+                            </AnimatePresence>
                         </div>
-                    )}
-                </AnimatePresence>
+                    </div>
+                </motion.div>
 
-                <div className="mt-10 text-center">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                        Secure login powered by CampusConnect
-                    </p>
+                {/* Login UI - Premium Dark */}
+                <div className={`w-full md:w-1/2 h-full p-16 flex flex-col justify-center transition-all duration-700 ${isLogin ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
+                    <div className="max-w-[340px] mx-auto w-full">
+                        <div className="text-center mb-10">
+                            <h3 className="text-4xl font-black text-white tracking-tighter mb-4 uppercase italic">Login</h3>
+                            <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] italic">Operational Role Required</p>
+                        </div>
+
+                        <div className="flex bg-slate-950/40 p-1.5 rounded-[2rem] border border-white/5 mb-12 shadow-inner">
+                            {loginRoles.map((r) => (
+                                <button
+                                    key={r.id}
+                                    type="button"
+                                    onClick={() => setRole(r.id)}
+                                    className={`flex-1 flex flex-col items-center justify-center py-4 rounded-[1.5rem] transition-all duration-500 ${role === r.id 
+                                        ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-[0_10px_30px_rgba(6,182,212,0.3)] scale-105 z-10' 
+                                        : 'text-slate-600 hover:text-slate-400'
+                                    }`}
+                                >
+                                    <r.icon className={`h-5 w-5 mb-1.5 transition-transform duration-500 ${role === r.id ? 'scale-110' : ''}`} />
+                                    <span className="text-[10px] font-black uppercase tracking-tighter">{r.label}</span>
+                                </button>
+                            ))}
+                        </div>
+                        
+                        <form onSubmit={handleLogin} className="space-y-10">
+                            <div className="relative border-b-2 border-white/5 py-2.5 focus-within:border-cyan-400 transition-all group">
+                                <span className="absolute left-0 -top-5 text-slate-600 text-[9px] font-black uppercase tracking-widest group-focus-within:text-cyan-400 transition-colors">Credential Email</span>
+                                <input name="email" type="email" required className="w-full bg-transparent text-white font-bold text-sm outline-none placeholder:text-slate-800" placeholder="your@campus.edu" />
+                                <Mail className="absolute right-0 top-2.5 h-5 w-5 text-slate-700 group-focus-within:text-cyan-400 transition-colors" />
+                            </div>
+
+                            <div className="relative border-b-2 border-white/5 py-2.5 focus-within:border-cyan-400 transition-all group">
+                                <span className="absolute left-0 -top-5 text-slate-600 text-[9px] font-black uppercase tracking-widest group-focus-within:text-cyan-400 transition-colors">Access Password</span>
+                                <input name="password" type="password" required className="w-full bg-transparent text-white font-bold text-sm outline-none placeholder:text-slate-800" placeholder="••••••••" />
+                                <Lock className="absolute right-0 top-2.5 h-5 w-5 text-slate-700 group-focus-within:text-cyan-400 transition-colors" />
+                            </div>
+
+                            <button 
+                                disabled={isLoading}
+                                className="w-full py-5 bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-600 rounded-2xl text-white font-black text-xs uppercase tracking-[0.3em] shadow-[0_20px_40px_rgba(6,182,212,0.25)] hover:bg-white hover:text-cyan-900 transition-all active:scale-95 flex items-center justify-center gap-3 mt-4"
+                            >
+                                {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : <>Access System <ArrowRight className="h-5 w-5" /></>}
+                            </button>
+                        </form>
+                    </div>
                 </div>
-            </motion.div>
+
+                {/* Register UI - High-Tech Grid */}
+                <div className={`w-full md:w-1/2 h-full px-12 py-10 flex flex-col justify-center transition-all duration-700 ${!isLogin ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
+                    <div className="max-w-[400px] mx-auto w-full">
+                        <div className="text-center mb-10">
+                           <h3 className="text-4xl font-black text-white tracking-tighter mb-3 uppercase italic">Register</h3>
+                           <p className="text-[10px] text-slate-500 font-black tracking-[0.2em] uppercase italic">Initialize Security Identity</p>
+                        </div>
+
+                        <div className="flex bg-slate-950/40 p-1.5 rounded-[1.5rem] border border-white/5 mb-10 shadow-inner">
+                            {registerRoles.map((r) => (
+                                <button
+                                    key={r.id}
+                                    type="button"
+                                    onClick={() => setRole(r.id)}
+                                    className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-xl transition-all duration-500 ${role === r.id 
+                                        ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg scale-105 z-10' 
+                                        : 'text-slate-600 hover:text-white'
+                                    }`}
+                                >
+                                    <r.icon className="h-5 w-5" />
+                                    <span className="text-[10px] font-black uppercase tracking-tighter">{r.label}</span>
+                                </button>
+                            ))}
+                        </div>
+                        
+                        <form onSubmit={handleRegister} className="grid grid-cols-2 gap-x-8 gap-y-10">
+                            <div className="col-span-2 relative border-b-2 border-white/5 py-2 focus-within:border-cyan-400 transition-all group">
+                                <span className="absolute left-0 -top-4 text-slate-600 text-[9px] font-black uppercase">Full Identity Name</span>
+                                <input name="name" required className="w-full bg-transparent text-white font-bold text-sm outline-none placeholder:text-slate-800 text-xs" placeholder="John Doe" />
+                                <User className="absolute right-0 top-2 h-4 w-4 text-slate-700 group-focus-within:text-cyan-400" />
+                            </div>
+
+                            <div className="relative border-b-2 border-white/5 py-2 focus-within:border-cyan-400 transition-all group">
+                                <span className="absolute left-0 -top-4 text-slate-600 text-[9px] font-black uppercase text-ellipsis overflow-hidden whitespace-nowrap">{role === 'STUDENT' ? 'Student ID' : 'Employee ID'}</span>
+                                <input name="idField" required className="w-full bg-transparent text-white font-bold text-sm outline-none placeholder:text-slate-800 text-xs" placeholder={role === 'STUDENT' ? 'STU-2025' : 'FAC-100'} />
+                                <Hash className="absolute right-0 top-2 h-4 w-4 text-slate-700 group-focus-within:text-cyan-400" />
+                            </div>
+
+                            <div className="relative border-b-2 border-white/5 py-2 focus-within:border-cyan-400 transition-all group">
+                                <span className="absolute left-0 -top-4 text-slate-600 text-[9px] font-black uppercase">Access Unit</span>
+                                <select name="department" className="w-full bg-transparent text-white font-bold text-xs outline-none appearance-none cursor-pointer">
+                                    {currentDepts.map(d => <option key={d} value={d} className="bg-slate-900 text-white">{d}</option>)}
+                                </select>
+                                <Building2 className="absolute right-0 top-2 h-4 w-4 text-slate-700 group-focus-within:text-cyan-400" />
+                            </div>
+
+                            <div className="col-span-2 relative border-b-2 border-white/5 py-2 focus-within:border-cyan-400 transition-all group">
+                                <span className="absolute left-0 -top-4 text-slate-600 text-[9px] font-black uppercase">Official Network Email</span>
+                                <input name="email" type="email" required className="w-full bg-transparent text-white font-bold text-sm outline-none placeholder:text-slate-800 text-xs" placeholder="your@campus.edu" />
+                                <Mail className="absolute right-0 top-2 h-4 w-4 text-slate-700 group-focus-within:text-cyan-400" />
+                            </div>
+
+                            <div className="col-span-2 relative border-b-2 border-white/5 py-2 focus-within:border-cyan-400 transition-all group">
+                                <span className="absolute left-0 -top-4 text-slate-600 text-[9px] font-black uppercase">Root Access Key</span>
+                                <input name="password" type="password" required className="w-full bg-transparent text-white font-bold text-sm outline-none placeholder:text-slate-800 text-xs" placeholder="••••••••" />
+                                <Lock className="absolute right-0 top-2 h-4 w-4 text-slate-700 group-focus-within:text-cyan-400" />
+                            </div>
+
+                            <button 
+                                disabled={isLoading}
+                                className="col-span-2 py-4.5 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 rounded-3xl text-white font-black text-[10px] uppercase tracking-[0.3em] shadow-xl shadow-blue-500/20 hover:scale-[1.02] transition-all active:scale-95 flex items-center justify-center gap-3 mt-6"
+                            >
+                                {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <>Activate Profile <ArrowRight className="h-4 w-4" /></>}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-5 text-slate-700 text-[9px] font-black tracking-[0.4em] uppercase opacity-40">
+                <Shield className="h-4 w-4" />
+                Secured Node Environment V5.2
+            </div>
         </div>
     );
 };
 
-export default Login;
+export default Auth;

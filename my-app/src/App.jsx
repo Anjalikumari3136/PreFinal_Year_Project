@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
-import Register from './pages/Register';
 import DashboardLayout from './layouts/DashboardLayout';
 import Overview from './pages/dashboard/Overview';
 import Requests from './pages/dashboard/Requests';
@@ -31,6 +30,7 @@ import RegistrationRequests from './pages/admin/RegistrationRequests';
 import FeaturesPage from './pages/Features';
 import AboutPage from './pages/About';
 import ContactPage from './pages/Contact';
+import Portals from './pages/Portals';
 
 const RoleProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
@@ -76,7 +76,7 @@ function App() {
             } />
             <Route path="/register" element={
               <PublicRoute>
-                <Register />
+                <Login />
               </PublicRoute>
             } />
 
@@ -128,6 +128,7 @@ function App() {
             <Route path="/features" element={<FeaturesPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
+            <Route path="/portals" element={<Portals />} />
           </Routes>
         </NotificationProvider>
       </Router>

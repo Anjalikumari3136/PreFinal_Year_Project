@@ -20,6 +20,7 @@ import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { cn } from '../../utils/cn';
 import toast from 'react-hot-toast';
+import API_BASE_URL from '../../config/api';
 
 const AdminRequests = () => {
     const { user } = useAuth();
@@ -37,7 +38,7 @@ const AdminRequests = () => {
         setLoading(true);
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get('https://prefinal-year-project.onrender.com/api/admin/requests', config);
+            const { data } = await axios.get(`${API_BASE_URL}/api/admin/requests`, config);
             setRequests(data);
         } catch (error) { toast.error('Failed to fetch requests'); }
         finally { setLoading(false); }
@@ -46,7 +47,7 @@ const AdminRequests = () => {
     const fetchFaculty = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get('https://prefinal-year-project.onrender.com/api/admin/faculty', config);
+            const { data } = await axios.get(`${API_BASE_URL}/api/admin/faculty`, config);
             setFaculty(data);
         } catch (error) { console.error(error); }
     };
@@ -70,7 +71,7 @@ const AdminRequests = () => {
             const payload = { status, resolutionNotes: resolutionNote };
             if (assigningTo) payload.assignedTo = assigningTo;
 
-            await axios.put(`https://prefinal-year-project.onrender.com/api/admin/requests/${selectedRequest._id}`, payload, config);
+            await axios.put(`${API_BASE_URL}/api/admin/requests/${selectedRequest._id}`, payload, config);
             toast.success(assigningTo ? `Request assigned to faculty` : `Request marked as ${status}`);
             setSelectedRequest(null);
             setResolutionNote('');

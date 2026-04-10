@@ -28,6 +28,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { cn } from '../../utils/cn';
 import PostUpdateModal from '../../components/admin/PostUpdateModal';
+import API_BASE_URL from '../../config/api';
 
 const AdminOverview = () => {
     const { user } = useAuth();
@@ -46,7 +47,7 @@ const AdminOverview = () => {
     const fetchData = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get('https://prefinal-year-project.onrender.com/api/admin/stats', config);
+            const { data } = await axios.get(`${API_BASE_URL}/api/admin/stats`, config);
             setStats(data);
         } catch (error) { console.error('Overview error:', error); }
         finally { setLoading(false); }

@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { cn } from '../../utils/cn';
 import toast from 'react-hot-toast';
+import API_BASE_URL from '../../config/api';
 
 const StudentProfileModal = ({ isOpen, onClose, studentId, onStatusChange }) => {
     const { user } = useAuth();
@@ -14,7 +15,7 @@ const StudentProfileModal = ({ isOpen, onClose, studentId, onStatusChange }) => 
     useEffect(() => {
         if (isOpen && studentId) {
             setLoading(true);
-            axios.get(`https://prefinal-year-project.onrender.com/api/admin/students/${studentId}/full`, {
+            axios.get(`${API_BASE_URL}/api/admin/students/${studentId}/full`, {
                 headers: { Authorization: `Bearer ${user.token}` }
             }).then(res => {
                 setData(res.data);
@@ -156,7 +157,7 @@ const StudentManagement = () => {
         setLoading(true);
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get('https://prefinal-year-project.onrender.com/api/admin/students', {
+            const { data } = await axios.get(`${API_BASE_URL}/api/admin/students`, {
                 params: filters,
                 headers: config.headers
             });
@@ -170,7 +171,7 @@ const StudentManagement = () => {
     const handleStatusUpdate = async (id, isActive) => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.put(`https://prefinal-year-project.onrender.com/api/admin/users/${id}/status`, { isActive }, config);
+            await axios.put(`${API_BASE_URL}/api/admin/users/${id}/status`, { isActive }, config);
             toast.success(`Account ${isActive ? 'activated' : 'deactivated'}`);
             fetchStudents();
             setModalOpen(false);

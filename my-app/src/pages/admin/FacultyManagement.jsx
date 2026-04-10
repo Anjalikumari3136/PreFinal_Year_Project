@@ -10,6 +10,7 @@ import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 import { cn } from '../../utils/cn';
+import API_BASE_URL from '../../config/api';
 
 const FacultyManagement = () => {
     const { user } = useAuth();
@@ -38,8 +39,8 @@ const FacultyManagement = () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
             const [facRes, workloadRes] = await Promise.all([
-                axios.get('https://prefinal-year-project.onrender.com/api/admin/faculty', config),
-                axios.get('https://prefinal-year-project.onrender.com/api/admin/faculty/workload', config)
+                axios.get(`${API_BASE_URL}/api/admin/faculty`, config),
+                axios.get(`${API_BASE_URL}/api/admin/faculty/workload`, config)
             ]);
             setFaculty(facRes.data);
             setWorkload(workloadRes.data);
@@ -72,7 +73,7 @@ const FacultyManagement = () => {
         e.preventDefault();
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.post('https://prefinal-year-project.onrender.com/api/admin/faculty', formData, config);
+            await axios.post(`${API_BASE_URL}/api/admin/faculty`, formData, config);
             toast.success('Faculty added successfully');
             setIsAddModalOpen(false);
             resetForm();
@@ -86,7 +87,7 @@ const FacultyManagement = () => {
         e.preventDefault();
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.put(`https://prefinal-year-project.onrender.com/api/admin/faculty/${selectedFaculty._id}`, formData, config);
+            await axios.put(`${API_BASE_URL}/api/admin/faculty/${selectedFaculty._id}`, formData, config);
             toast.success('Faculty updated successfully');
             setIsEditModalOpen(false);
             resetForm();
@@ -100,7 +101,7 @@ const FacultyManagement = () => {
         if (!window.confirm('Are you sure you want to remove this faculty member?')) return;
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.delete(`https://prefinal-year-project.onrender.com/api/admin/faculty/${id}`, config);
+            await axios.delete(`${API_BASE_URL}/api/admin/faculty/${id}`, config);
             toast.success('Faculty removed');
             fetchAll();
         } catch (error) {

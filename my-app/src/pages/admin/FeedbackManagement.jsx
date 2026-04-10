@@ -17,6 +17,7 @@ import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 import { cn } from '../../utils/cn';
+import API_BASE_URL from '../../config/api';
 
 const FeedbackManagement = () => {
     const { user } = useAuth();
@@ -30,7 +31,7 @@ const FeedbackManagement = () => {
     const fetchFeedbacks = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get('https://prefinal-year-project.onrender.com/api/admin/feedback', config);
+            const { data } = await axios.get(`${API_BASE_URL}/api/admin/feedback`, config);
             setFeedbacks(data);
         } catch (error) { toast.error('Failed to load feedback'); }
         finally { setLoading(false); }
@@ -43,7 +44,7 @@ const FeedbackManagement = () => {
         setUpdating(true);
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.put(`https://prefinal-year-project.onrender.com/api/admin/feedback/${selected._id}`, {
+            await axios.put(`${API_BASE_URL}/api/admin/feedback/${selected._id}`, {
                 status,
                 adminResponse
             }, config);

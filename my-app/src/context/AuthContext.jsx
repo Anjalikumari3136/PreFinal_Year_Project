@@ -37,9 +37,9 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
             return {
                 success: false,
-                error: error.response && error.response.data.message
-                    ? error.response.data.message
-                    : error.message,
+                message: error.response?.data?.message || error.message,
+                requiresVerification: error.response?.data?.requiresVerification,
+                email: error.response?.data?.email
             };
         }
     };

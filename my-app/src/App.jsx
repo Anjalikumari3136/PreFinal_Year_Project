@@ -31,6 +31,7 @@ import FeaturesPage from './pages/Features';
 import AboutPage from './pages/About';
 import ContactPage from './pages/Contact';
 import Portals from './pages/Portals';
+import VerifyOTP from './pages/VerifyOTP';
 
 const RoleProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
@@ -129,6 +130,7 @@ function App() {
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/portals" element={<Portals />} />
+            <Route path="/verify-otp" element={<VerifyOTP />} />
           </Routes>
         </NotificationProvider>
       </Router>

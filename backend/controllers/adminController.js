@@ -52,7 +52,7 @@ const getStudents = async (req, res) => {
         if (department) query.department = department;
         if (year) query.year = year;
         if (semester) query.semester = semester;
-        if (status !== undefined) query.isActive = status === 'active';
+        if (status) query.isActive = status === 'active';
 
         let studentsQuery = User.find(query)
             .select('-password')

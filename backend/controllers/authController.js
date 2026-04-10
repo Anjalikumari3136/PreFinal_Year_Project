@@ -8,15 +8,30 @@ import sendEmail from '../utils/sendEmail.js';
 const authUser = async (req, res) => {
     const { email, password } = req.body;
 
+    // Domain restriction
+    const isAllowedAdmin = email.toLowerCase() === 'admin@universiy.edu' || email.toLowerCase() === 'admin@university.edu';
+    if (!email.toLowerCase().endsWith('@krmu.edu.in') && !isAllowedAdmin) {
+        console.log(`Login blocked: Non-institutional email ${email}`);
+        return res.status(403).json({ message: 'Only @krmu.edu.in institutional accounts are allowed.' });
+    }
+
     try {
         const user = await User.findOne({ email });
 
         if (user && (await user.matchPassword(password))) {
+            if (!user.isVerified) {
+                return res.status(401).json({
+                    message: 'Your account is not verified. Please verify your email first.',
+                    requiresVerification: true,
+                    email: user.email
+                });
+            }
+
             if (user.status !== 'APPROVED' && user.role !== 'ADMIN') {
-                return res.status(403).json({ 
-                    message: user.status === 'REJECTED' 
-                        ? 'Your registration was rejected by the administrator.' 
-                        : 'Your account is pending administrator approval.' 
+                return res.status(403).json({
+                    message: user.status === 'REJECTED'
+                        ? 'Your registration was rejected by the administrator.'
+                        : 'Your account is pending administrator approval.'
                 });
             }
 
@@ -53,6 +68,13 @@ const registerUser = async (req, res) => {
             return res.status(400).json({ message: 'User already exists' });
         }
 
+        // Domain restriction: Only @krmu.edu.in allowed (Excl. custom admin)
+        const isAllowedAdmin = email.toLowerCase() === 'admin@universiy.edu' || email.toLowerCase() === 'admin@university.edu';
+        if (!email.toLowerCase().endsWith('@krmu.edu.in') && !isAllowedAdmin) {
+            console.log(`Registration blocked: Non-institutional email ${email}`);
+            return res.status(400).json({ message: 'Only institutional accounts (@krmu.edu.in) are allowed for registration.' });
+        }
+
         // Generate 6-digit OTP
         const generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
         const otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes from now
@@ -71,8 +93,10 @@ const registerUser = async (req, res) => {
         });
 
         if (user) {
-            console.log(`New user registered: ${user.email}. Sending OTP...`);
-            
+            console.log('\n\x1b[36m%s\x1b[0m', '================================================');
+            console.log('\x1b[36m%s\x1b[0m', `NEW REGISTRATION: ${user.email}`);
+            console.log('\x1b[36m%s\x1b[0m', '================================================\n');
+
             // Send OTP email
             await sendEmail({
                 email: user.email,
@@ -148,6 +172,13 @@ const verifyOTP = async (req, res) => {
 const forgotPassword = async (req, res) => {
     const { email } = req.body;
 
+    // Domain restriction
+    const isAllowedAdmin = email.toLowerCase() === 'admin@universiy.edu' || email.toLowerCase() === 'admin@university.edu';
+    if (!email.toLowerCase().endsWith('@krmu.edu.in') && !isAllowedAdmin) {
+        console.log(`Forgot Password blocked: Non-institutional email ${email}`);
+        return res.status(403).json({ message: 'Only @krmu.edu.in institutional accounts are supported.' });
+    }
+
     try {
         const user = await User.findOne({ email });
 
@@ -215,4 +246,62 @@ const resetPassword = async (req, res) => {
     }
 };
 
-export { authUser, registerUser, verifyOTP, forgotPassword, resetPassword };
+// @desc    Resend OTP
+// @route   POST /api/auth/resend-otp
+// @access  Public
+const resendOTP = async (req, res) => {
+    const { email } = req.body;
+
+    // Domain restriction
+    const isAllowedAdmin = email.toLowerCase() === 'admin@universiy.edu' || email.toLowerCase() === 'admin@university.edu';
+    if (!email.toLowerCase().endsWith('@krmu.edu.in') && !isAllowedAdmin) {
+        return res.status(403).json({ message: 'Only institutional accounts are supported.' });
+    }
+
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (user.isVerified) {
+            return res.status(400).json({ message: 'Account is already verified' });
+        }
+
+        // Generate 6-digit OTP
+        const generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+        const otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+
+        user.otp = generatedOTP;
+        user.otpExpires = otpExpires;
+        await user.save();
+
+        console.log('\n\x1b[33m%s\x1b[0m', '------------------------------------------------');
+        console.log('\x1b[33m%s\x1b[0m', `  RESENDING OTP TO: ${user.email}`);
+        console.log('\x1b[33m%s\x1b[0m', `  NEW OTP CODE: ${generatedOTP}`);
+        console.log('\x1b[33m%s\x1b[0m', '------------------------------------------------\n');
+
+        // Send OTP email
+        await sendEmail({
+            email: user.email,
+            name: user.name,
+            subject: 'New Verification Code - Campus Connect',
+            htmlContent: `
+                <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; max-width: 600px;">
+                    <h2>Campus Connect New OTP</h2>
+                    <p>Your new verification code is:</p>
+                    <div style="background: #f4f4f4; padding: 15px; font-size: 24px; font-weight: bold; text-align: center; border-radius: 5px;">
+                        ${generatedOTP}
+                    </div>
+                </div>
+            `
+        });
+
+        res.json({ message: 'New OTP sent to your email' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export { authUser, registerUser, verifyOTP, forgotPassword, resetPassword, resendOTP };

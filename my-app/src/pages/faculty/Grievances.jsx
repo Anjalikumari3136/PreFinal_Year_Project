@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { 
-    MessageSquare, 
-    ShieldCheck, 
-    Clock, 
-    X, 
-    CheckCircle2, 
-    Loader2, 
-    AlertCircle, 
-    Search, 
-    Filter, 
+import {
+    MessageSquare,
+    ShieldCheck,
+    Clock,
+    X,
+    CheckCircle2,
+    Loader2,
+    AlertCircle,
+    Search,
+    Filter,
     TrendingUp,
     MessageCircle,
     Send,
@@ -33,9 +33,9 @@ const GrievanceResolution = () => {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
             const { data } = await axios.get('https://prefinal-year-project.onrender.com/api/faculty/grievances', config);
             setGrievances(data);
-        } catch (error) { 
+        } catch (error) {
             // Fallback for demo
-            setGrievances([]); 
+            setGrievances([]);
         } finally { setLoading(false); }
     };
 
@@ -43,7 +43,7 @@ const GrievanceResolution = () => {
 
     const handleResolve = async (e) => {
         e.preventDefault();
-        if(!response.trim()) return;
+        if (!response.trim()) return;
         setUpdating(true);
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
@@ -138,7 +138,7 @@ const GrievanceResolution = () => {
                         </div>
 
                         <div className="bg-[#171317] rounded-[3.5rem] p-12 text-white shadow-2xl relative overflow-hidden group/desk">
-                             <div className="absolute top-0 right-0 w-64 h-64 bg-orange-600 rounded-full blur-[120px] -mr-32 -mt-32 opacity-30 shadow-orange-600/50 group-hover/desk:opacity-50 transition-opacity"></div>
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-orange-600 rounded-full blur-[120px] -mr-32 -mt-32 opacity-30 shadow-orange-600/50 group-hover/desk:opacity-50 transition-opacity"></div>
                             <h3 className="text-[10px] font-black text-orange-400 uppercase tracking-[0.25em] mb-10 flex items-center gap-4 italic underline decoration-white/10 underline-offset-8">
                                 <TrendingUp className="h-5 w-5" /> Resolution Desk Protocol
                             </h3>
@@ -163,7 +163,7 @@ const GrievanceResolution = () => {
                                 </button>
                             </form>
                             <div className="mt-8 flex justify-center">
-                                 <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest opacity-60">Authorized Faculty Access Only • Trace ID: {user._id.slice(-6)}</p>
+                                <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest opacity-60">Authorized Faculty Access Only • Trace ID: {user._id.slice(-6)}</p>
                             </div>
                         </div>
                     </div>

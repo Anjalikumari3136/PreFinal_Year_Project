@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { 
-    MessageSquare, 
-    Plus, 
-    AlertTriangle, 
-    CheckCircle, 
-    Clock, 
-    X, 
-    ShieldAlert, 
-    ChevronRight, 
+import {
+    MessageSquare,
+    Plus,
+    AlertTriangle,
+    CheckCircle,
+    Clock,
+    X,
+    ShieldAlert,
+    ChevronRight,
     MessageCircle,
     Loader2,
     Send
@@ -60,7 +60,7 @@ const Feedback = () => {
                     <h1 className="text-4xl font-black text-slate-900 tracking-tighter leading-none mb-2 italic">Grievance Desk</h1>
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest underline decoration-orange-600 decoration-2 underline-offset-4">Log institutional complaints & feedback</p>
                 </div>
-                <button 
+                <button
                     onClick={() => setShowForm(!showForm)}
                     className={cn(
                         "px-8 py-5 rounded-[1.5rem] font-black uppercase text-[10px] tracking-[0.2em] shadow-2xl transition-all flex items-center gap-4",
@@ -117,8 +117,8 @@ const Feedback = () => {
                                 placeholder="Explain the grievance in detail for administrative review..."
                             />
                         </div>
-                        <button 
-                            type="submit" 
+                        <button
+                            type="submit"
                             disabled={submitting}
                             className="bg-slate-900 text-white px-10 py-5 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-black shadow-xl disabled:opacity-50 flex items-center gap-3 transition-all active:scale-95"
                         >

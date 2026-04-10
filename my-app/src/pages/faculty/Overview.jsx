@@ -49,15 +49,14 @@ const FacultyOverview = () => {
     const stats = [
         { label: 'Assigned Mentees', value: data.stats.menteeCount || 0, icon: Users, color: 'text-orange-500', bg: 'bg-orange-50' },
         { label: 'Grievance Handled', value: data.stats.grievanceResolved || 0, icon: Shield, color: 'text-emerald-500', bg: 'bg-emerald-50' },
-        { label: 'Total Resources', value: 12, icon: BookOpen, color: 'text-blue-500', bg: 'bg-blue-50' },
     ];
 
     return (
         <div className="space-y-10 animate-in fade-in duration-1000">
-            
+
             <div className="relative bg-gradient-to-r from-[#171317] to-[#2d1b18] rounded-[2.5rem] p-8 text-white overflow-hidden shadow-2xl group">
                 <div className="absolute top-0 right-0 w-80 h-80 bg-orange-600 rounded-full -mr-32 -mt-32 blur-[100px] opacity-20 transition-opacity"></div>
-                
+
                 <div className="relative z-10 flex flex-col xl:flex-row xl:items-center justify-between gap-12">
                     <div className="space-y-3">
                         <div className="flex items-center gap-3">
@@ -71,28 +70,16 @@ const FacultyOverview = () => {
                             <span className="text-orange-500">{data.faculty?.name || 'Academic Lead'}</span> 👋
                         </h1>
                         <p className="text-slate-400 text-[10px] font-medium max-w-lg leading-relaxed uppercase tracking-wide opacity-80">
-                            Institutional Oversight: You are managing student welfare and academic growth. Today, <span className="text-white font-bold">{data.stats.menteeCount} candidates</span> are under your direct mentorship.
+                            Institutional Oversight: You are managing student welfare and mentorship protocols. Today, <span className="text-white font-bold">{data.stats.menteeCount} candidates</span> are under your direct mentorship.
                         </p>
                     </div>
 
                     <div className="flex flex-wrap gap-4 shrink-0">
-                        <button
-                            onClick={() => navigate('/faculty-dashboard/attendance')}
-                            className="bg-white text-slate-900 rounded-2xl px-6 py-4 flex items-center gap-4 shadow-xl hover:scale-[1.02] transition-all group/btn h-fit"
-                        >
-                            <div className="h-10 w-10 rounded-xl bg-orange-600 flex items-center justify-center text-white shadow-lg group-hover/btn:rotate-12 transition-transform">
-                                <Calendar className="h-5 w-5" />
-                            </div>
-                            <div className="text-left font-bold leading-none">
-                                <p className="text-[8px] text-slate-400 uppercase tracking-widest mb-1">Protocol Alpha</p>
-                                <p className="text-base uppercase tracking-tighter">Attendance Log</p>
-                            </div>
-                        </button>
                     </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {stats.map((s, i) => (
                     <div key={i} className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden relative group">
                         <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center mb-6 shadow-md transition-transform group-hover:scale-110", s.bg, s.color)}>
@@ -120,14 +107,14 @@ const FacultyOverview = () => {
                         Pending Actions
                     </h3>
                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-2 mb-8 decoration-orange-600 decoration-2 underline-offset-4">Governance Task Queue</p>
-                    
+
                     <div className="space-y-3 relative z-10">
                         <div className="p-5 bg-slate-50/50 rounded-2xl border border-slate-100 flex items-center justify-between group/task hover:bg-white hover:shadow-lg transition-all">
                             <div className="flex items-center gap-4">
                                 <Activity className="h-5 w-5 text-orange-600 animate-pulse" />
                                 <div>
                                     <p className="font-bold text-slate-900 text-sm uppercase tracking-tight">Grievance Review</p>
-                                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">4 Tickets waiting</p>
+                                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{data.stats.pendingApprovalsCount} Tickets waiting</p>
                                 </div>
                             </div>
                             <Button variant="ghost" className="h-8 w-8 p-0 rounded-full hover:bg-slate-900 hover:text-white" onClick={() => navigate('/faculty-dashboard/grievances')}>
@@ -181,7 +168,7 @@ const FacultyOverview = () => {
                             </div>
                         ))}
                     </div>
-                    <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest shrink-0">15+ Dedicated Mentees Assigned</p>
+                    <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest shrink-0">{data.stats.menteeCount}+ Dedicated Mentees Assigned</p>
                 </div>
                 <div className="flex items-center gap-4 text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] italic underline decoration-slate-100 underline-offset-4">
                     UniSupport Nexus • Faculty v4.2

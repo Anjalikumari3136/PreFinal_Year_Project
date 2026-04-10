@@ -1,5 +1,5 @@
 import express from 'express';
-import { getFacultyDashboard, updateApprovalStatus } from '../controllers/facultyController.js';
+import { getFacultyDashboard, updateApprovalStatus, sendNoticeToStudents } from '../controllers/facultyController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -18,5 +18,6 @@ router.use(facultyOnly);
 
 router.get('/dashboard', getFacultyDashboard);
 router.put('/approvals/:id', updateApprovalStatus);
+router.post('/send-notice', sendNoticeToStudents);
 
 export default router;

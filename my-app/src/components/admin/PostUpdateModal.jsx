@@ -33,10 +33,10 @@ const PostUpdateModal = ({ isOpen, onClose }) => {
                     Authorization: `Bearer ${user.token}`
                 }
             };
-            
+
             // Note: This endpoint should be added to backend
             await axios.post('https://prefinal-year-project.onrender.com/api/admin/broadcast', formData, config);
-            
+
             toast.success('Broadcast sent to all students! 📢');
             onClose();
         } catch (error) {
@@ -71,9 +71,9 @@ const PostUpdateModal = ({ isOpen, onClose }) => {
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Update Type</label>
-                            <select 
+                            <select
                                 value={formData.type}
-                                onChange={(e) => setFormData({...formData, type: e.target.value})}
+                                onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                                 className="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500/30 transition-all outline-none"
                             >
                                 <option value="GENERAL">General Notice</option>
@@ -89,11 +89,11 @@ const PostUpdateModal = ({ isOpen, onClose }) => {
                                     <button
                                         key={p}
                                         type="button"
-                                        onClick={() => setFormData({...formData, priority: p})}
+                                        onClick={() => setFormData({ ...formData, priority: p })}
                                         className={cn(
                                             "flex-1 py-4 rounded-2xl text-[10px] font-black transition-all border",
-                                            formData.priority === p 
-                                                ? "bg-slate-900 text-white border-slate-900 scale-105 shadow-lg" 
+                                            formData.priority === p
+                                                ? "bg-slate-900 text-white border-slate-900 scale-105 shadow-lg"
                                                 : "bg-white text-slate-400 border-slate-100 hover:border-slate-300"
                                         )}
                                     >
@@ -112,7 +112,7 @@ const PostUpdateModal = ({ isOpen, onClose }) => {
                                 placeholder="Headline / Title of Update"
                                 className="w-full pl-12 pr-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-black focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500/30 transition-all outline-none"
                                 value={formData.title}
-                                onChange={(e) => setFormData({...formData, title: e.target.value})}
+                                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                 required
                             />
                         </div>
@@ -121,7 +121,7 @@ const PostUpdateModal = ({ isOpen, onClose }) => {
                             placeholder="Write your message here... Detailed information about the update."
                             className="w-full p-6 bg-slate-50 border border-slate-100 rounded-[2rem] text-sm font-medium focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500/30 transition-all outline-none min-h-[150px] resize-none"
                             value={formData.content}
-                            onChange={(e) => setFormData({...formData, content: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                             required
                         ></textarea>
                     </div>

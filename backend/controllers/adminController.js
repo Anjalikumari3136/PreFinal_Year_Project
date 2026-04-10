@@ -3,6 +3,7 @@ import Request from '../models/Request.js';
 import Feedback from '../models/Feedback.js';
 import AuditLog from '../models/AuditLog.js';
 import Mentorship from '../models/Mentorship.js';
+import Notification from '../models/Notification.js';
 
 // Helper to log actions
 const logAction = async (action, adminId, targetId, details = '') => {
@@ -284,6 +285,28 @@ const assignMentor = async (req, res) => {
     } catch (error) { res.status(500).json({ message: error.message }); }
 };
 
+// @desc    Broadcast a notice to all users or specific roles
+// @route   POST /api/admin/broadcast
+const broadcastNotice = async (req, res) => {
+    try {
+        const { title, content, type, priority, targetAudience } = req.body;
+
+        const notification = await Notification.create({
+            title,
+            message: content,
+            sender: req.user._id,
+            targetAudience: targetAudience || 'ALL',
+            isGeneral: true
+        });
+
+        await logAction('BROADCAST_NOTICE', req.user._id, null, `Broadcasted: ${title}`);
+
+        res.status(201).json(notification);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 export {
     getStudents,
     getFullStudentProfile,
@@ -297,5 +320,6 @@ export {
     getPendingUsers,
     addFaculty,
     updateFaculty,
-    deleteFaculty
+    deleteFaculty,
+    broadcastNotice
 };

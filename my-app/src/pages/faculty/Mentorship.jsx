@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { 
-    Users, 
-    Calendar, 
-    Clock, 
-    CheckCircle2, 
-    Clock3, 
-    AlertCircle, 
-    X, 
-    Loader2, 
-    Search, 
-    TrendingUp, 
-    MessageCircle, 
-    GraduationCap, 
-    ChevronRight, 
+import {
+    Users,
+    Calendar,
+    Clock,
+    CheckCircle2,
+    Clock3,
+    AlertCircle,
+    X,
+    Loader2,
+    Search,
+    TrendingUp,
+    MessageCircle,
+    GraduationCap,
+    ChevronRight,
     Activity,
     Shield,
     Award,
@@ -57,8 +57,8 @@ const FacultyMentorship = () => {
 
     if (loading) return <div className="h-[60vh] flex items-center justify-center"><Loader2 className="animate-spin h-10 w-10 text-orange-600" /></div>;
 
-    const filtered = filter === 'All' 
-        ? sessions 
+    const filtered = filter === 'All'
+        ? sessions
         : sessions.filter(s => s.status === filter.toUpperCase().replace(' ', '_'));
 
     return (
@@ -158,7 +158,7 @@ const FacultyMentorship = () => {
 
                     <div className="flex-1 overflow-y-auto p-12 space-y-12 custom-scrollbar bg-[#f8f9fa]/50">
                         <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm relative overflow-hidden group/note">
-                             <div className="absolute top-0 right-0 p-8 opacity-[0.02] group-hover/note:rotate-12 transition-transform"><MessageCircle className="h-48 w-48" /></div>
+                            <div className="absolute top-0 right-0 p-8 opacity-[0.02] group-hover/note:rotate-12 transition-transform"><MessageCircle className="h-48 w-48" /></div>
                             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] mb-8 underline decoration-orange-600 decoration-2 underline-offset-4">Intellectual Statement</h3>
                             <p className="text-slate-800 leading-relaxed font-bold text-lg italic relative z-10">"{selected.requestMessage || selected.note || 'No specific statement provided.'}"</p>
                         </div>
@@ -170,19 +170,19 @@ const FacultyMentorship = () => {
                             </h3>
                             <div className="flex flex-col gap-6 relative z-10">
                                 {selected.status === 'PENDING' && (
-                                    <button 
+                                    <button
                                         onClick={() => handleUpdateStatus(selected._id, 'SCHEDULED')}
                                         disabled={updating}
                                         className="w-full py-6 bg-white text-slate-900 border border-white/5 rounded-[1.5rem] tracking-[0.25em] font-black text-[10px] uppercase hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-2xl shadow-white/5 flex items-center justify-center gap-4 active:scale-95 group/btn"
                                     >
                                         <div className="h-6 w-6 rounded-lg bg-orange-600 group-hover/btn:bg-white flex items-center justify-center transition-colors">
-                                           <Clock className={cn("h-3.5 w-3.5 text-white underline group-hover/btn:text-orange-600")} />
+                                            <Clock className={cn("h-3.5 w-3.5 text-white underline group-hover/btn:text-orange-600")} />
                                         </div>
                                         Authorize Scheduling
                                     </button>
                                 )}
-                                
-                                <button 
+
+                                <button
                                     onClick={() => handleUpdateStatus(selected._id, 'COMPLETED')}
                                     disabled={updating}
                                     className="w-full py-8 bg-[#f4511e] hover:bg-orange-700 text-white rounded-[2rem] text-[11px] font-black uppercase tracking-[0.4em] shadow-2xl shadow-orange-600/40 transition-all flex items-center justify-center gap-6 active:scale-[0.98] outline-none group/complete"
@@ -196,8 +196,8 @@ const FacultyMentorship = () => {
                                         </>
                                     )}
                                 </button>
-                                
-                                <button 
+
+                                <button
                                     onClick={() => handleUpdateStatus(selected._id, 'REJECTED')}
                                     disabled={updating}
                                     className="w-full py-4 text-slate-500 hover:text-rose-400 transition-all text-[9px] font-black uppercase tracking-[0.5em] italic underline decoration-transparent hover:decoration-rose-600/30 underline-offset-8"
@@ -211,12 +211,12 @@ const FacultyMentorship = () => {
             )}
 
             <div className="bg-[#f8f9fa] border-2 border-dashed border-slate-200 rounded-[4rem] p-12 flex flex-col items-center justify-center text-center group mt-auto w-full max-w-4xl mx-auto">
-                 <div className="h-20 w-20 rounded-[2rem] bg-white border border-slate-100 flex items-center justify-center text-slate-300 mb-6 group-hover:scale-110 transition-transform shadow-sm relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-br from-orange-400/5 to-transparent"></div>
-                      <Shield className="h-10 w-10 text-orange-600 relative z-10" />
-                 </div>
-                 <h4 className="text-2xl font-black text-slate-800 tracking-tight uppercase italic leading-none mb-4">Integrity Board Protocol</h4>
-                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] max-w-[500px] leading-relaxed opacity-80 decoration-slate-200 underline underline-offset-[8px]">Bureau Note: Your professional guidance is authenticated and securely recorded for institutional quality auditing and student protection.</p>
+                <div className="h-20 w-20 rounded-[2rem] bg-white border border-slate-100 flex items-center justify-center text-slate-300 mb-6 group-hover:scale-110 transition-transform shadow-sm relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-orange-400/5 to-transparent"></div>
+                    <Shield className="h-10 w-10 text-orange-600 relative z-10" />
+                </div>
+                <h4 className="text-2xl font-black text-slate-800 tracking-tight uppercase italic leading-none mb-4">Integrity Board Protocol</h4>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] max-w-[500px] leading-relaxed opacity-80 decoration-slate-200 underline underline-offset-[8px]">Bureau Note: Your professional guidance is authenticated and securely recorded for institutional quality auditing and student protection.</p>
             </div>
         </div>
     );

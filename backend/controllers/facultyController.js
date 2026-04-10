@@ -2,6 +2,8 @@ import User from '../models/User.js';
 import Request from '../models/Request.js';
 import Feedback from '../models/Feedback.js';
 import Mentorship from '../models/Mentorship.js';
+import Notification from '../models/Notification.js';
+import sendEmail from '../utils/sendEmail.js';
 
 // @desc    Get faculty dashboard stats and insights
 // @route   GET /api/faculty/dashboard
@@ -19,11 +21,21 @@ const getFacultyDashboard = async (req, res) => {
             status: { $in: ['PENDING', 'IN_PROGRESS'] }
         }).populate('student', 'name studentId');
 
-        // 3. Workload Calculation (Simulated based on pending approvals and mentees)
+        // 3. Get Grievance Count (Requests assigned or Exam related)
+        const grievancesCount = await Request.countDocuments({
+            $or: [
+                { assignedTo: facultyId },
+                { category: 'EXAM' }
+            ],
+            status: { $ne: 'RESOLVED' }
+        });
+
+        // 4. Workload Calculation (Simulated based on pending approvals and mentees)
         const workload = {
             menteeCount: mentees.length,
             pendingApprovalsCount: pendingApprovals.length,
-            score: (mentees.length * 10) + (pendingApprovals.length * 20) // Simple weighting
+            grievanceCount: grievancesCount,
+            score: (mentees.length * 10) + (pendingApprovals.length * 20) + (grievancesCount * 15)
         };
 
         // 3a. Get Scheduled Meetings
@@ -33,13 +45,10 @@ const getFacultyDashboard = async (req, res) => {
             'meetingDetails.date': { $gte: new Date() }
         }).populate('student', 'name studentId department year');
 
-        // 4. SMART INSIGHTS / AI RISK DETECTION (Logic-based for Final Year Project)
+        // 4. SMART INSIGHTS / AI RISK DETECTION
         const insights = [];
-
         for (const student of mentees) {
             const riskFactors = [];
-
-            // Factor 1: Multiple Complaints
             const complaintCount = await Feedback.countDocuments({ student: student._id, category: { $in: ['Academic', 'Harassment'] } });
             if (complaintCount > 2) {
                 riskFactors.push({
@@ -48,8 +57,6 @@ const getFacultyDashboard = async (req, res) => {
                     severity: 'HIGH'
                 });
             }
-
-            // Factor 2: High Pending Requests (Poor engagement or blockers)
             const pendingRequests = await Request.countDocuments({ student: student._id, status: 'PENDING' });
             if (pendingRequests > 3) {
                 riskFactors.push({
@@ -58,7 +65,6 @@ const getFacultyDashboard = async (req, res) => {
                     severity: 'MEDIUM'
                 });
             }
-
             if (riskFactors.length > 0) {
                 insights.push({
                     studentId: student._id,
@@ -85,7 +91,6 @@ const getFacultyDashboard = async (req, res) => {
             scheduledMeetings,
             insights
         });
-
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -98,24 +103,129 @@ const updateApprovalStatus = async (req, res) => {
     try {
         const { status, resolutionNotes } = req.body;
         const request = await Request.findById(req.params.id);
-
-        if (!request) {
-            return res.status(404).json({ message: 'Request not found' });
-        }
-
-        // Ensure faculty is the one assigned
+        if (!request) return res.status(404).json({ message: 'Request not found' });
         if (request.assignedTo.toString() !== req.user._id.toString()) {
             return res.status(401).json({ message: 'Not authorized to approve this request' });
         }
-
         request.status = status;
         request.resolutionNotes = resolutionNotes;
         await request.save();
-
         res.json({ message: 'Request updated successfully', request });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
-export { getFacultyDashboard, updateApprovalStatus };
+// @desc    Send notice to all students/mentees and email them
+// @route   POST /api/faculty/send-notice
+// @access  Private/Faculty
+const sendNoticeToStudents = async (req, res) => {
+    try {
+        const { title, message, targetGroup } = req.body;
+        const facultyId = req.user._id;
+
+        const notification = await Notification.create({
+            title,
+            message,
+            sender: facultyId,
+            targetAudience: targetGroup === 'ALL' ? 'STUDENTS' : 'ALL',
+            isGeneral: true
+        });
+
+        let students = [];
+        if (targetGroup === 'MENTEES') {
+            students = await User.find({ assignedMentor: facultyId, role: 'STUDENT' });
+        } else {
+            students = await User.find({ role: 'STUDENT', status: 'APPROVED' });
+        }
+
+        for (const student of students) {
+            await sendEmail({
+                email: student.email,
+                name: student.name,
+                subject: `New Notice: ${title}`,
+                htmlContent: `
+                    <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                        <h2 style="color: #f4511e;">Bureau Alert: ${title}</h2>
+                        <p><strong>From:</strong> Professor ${req.user.name}</p>
+                        <hr />
+                        <p>${message}</p>
+                        <br />
+                        <p style="font-size: 12px; color: #777;">This is an official notice from the Academic Bureau Terminal.</p>
+                    </div>
+                `
+            });
+        }
+
+        res.status(201).json({
+            message: `Notice broadcasted to ${students.length} students via email and portal.`,
+            notification
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Get grievances/requests relevant to faculty (e.g. Exam Cell)
+// @route   GET /api/faculty/grievances
+// @access  Private/Faculty
+const getGrievances = async (req, res) => {
+    try {
+        const studentRequests = await Request.find({
+            $or: [
+                { assignedTo: req.user._id },
+                { category: 'EXAM' }
+            ]
+        }).populate('student', 'name studentId email');
+
+        const feedbacks = await Feedback.find({
+            category: 'Examination'
+        }).populate('student', 'name studentId email');
+
+        const mappedFeedbacks = feedbacks.map(f => ({
+            _id: f._id,
+            title: f.title,
+            description: f.description,
+            status: f.status,
+            category: 'EXAMINATION_COMPLAINT',
+            student: f.student,
+            createdAt: f.createdAt,
+            isFeedback: true
+        }));
+
+        res.json([...studentRequests, ...mappedFeedbacks]);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Support resolving a grievance (Request or Feedback)
+// @route   PUT /api/faculty/grievances/:id
+// @access  Private/Faculty
+const resolveGrievance = async (req, res) => {
+    try {
+        const { response } = req.body;
+
+        let item = await Request.findById(req.params.id);
+        if (item) {
+            item.status = 'RESOLVED';
+            item.resolutionNotes = response;
+            await item.save();
+            return res.json({ message: 'Grievance resolved', grievance: item });
+        }
+
+        item = await Feedback.findById(req.params.id);
+        if (item) {
+            item.status = 'RESOLVED';
+            item.adminResponse = response;
+            await item.save();
+            return res.json({ message: 'Complaint resolved', grievance: item });
+        }
+
+        res.status(404).json({ message: 'Grievance not found' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export { getFacultyDashboard, updateApprovalStatus, sendNoticeToStudents, getGrievances, resolveGrievance };

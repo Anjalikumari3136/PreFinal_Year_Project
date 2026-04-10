@@ -15,10 +15,7 @@ import AdminRequests from './pages/admin/AdminRequests';
 import Feedback from './pages/dashboard/Feedback';
 import FacultyLayout from './layouts/FacultyLayout';
 import FacultyOverview from './pages/faculty/Overview';
-import Attendance from './pages/faculty/Attendance';
-import Performance from './pages/faculty/Performance';
 import NoticeBoard from './pages/faculty/NoticeBoard';
-import Resources from './pages/faculty/Resources';
 import FacultyProfile from './pages/faculty/Profile';
 import FacultyMentorship from './pages/faculty/Mentorship';
 import GrievanceResolution from './pages/faculty/Grievances';
@@ -114,17 +111,12 @@ function App() {
               </RoleProtectedRoute>
             }>
               <Route index element={<FacultyOverview />} />
-              <Route path="attendance" element={<Attendance />} />
-              <Route path="performance" element={<Performance />} />
-              <Route path="resources" element={<Resources />} />
-              <Route path="my-attendance" element={<div>My Personal Attendance Records</div>} />
               <Route path="notice" element={<NoticeBoard />} />
               <Route path="profile" element={<FacultyProfile />} />
               <Route path="mentorship" element={<FacultyMentorship />} />
               <Route path="grievances" element={<GrievanceResolution />} />
 
               <Route path="students" element={<Navigate to="/faculty-dashboard" />} />
-              <Route path="courses" element={<Navigate to="/faculty-dashboard/resources" />} />
             </Route>
             <Route path="/features" element={<FeaturesPage />} />
             <Route path="/about" element={<AboutPage />} />

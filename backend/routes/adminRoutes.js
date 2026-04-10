@@ -12,7 +12,8 @@ import {
     getPendingUsers,
     addFaculty,
     updateFaculty,
-    deleteFaculty
+    deleteFaculty,
+    broadcastNotice
 } from '../controllers/adminController.js';
 import { getAllRequests, updateRequestStatus } from '../controllers/adminRequestController.js';
 import { getAllFeedback, updateFeedbackAdmin } from '../controllers/feedbackController.js';
@@ -25,6 +26,7 @@ router.use(admin);
 
 // Student Management
 router.get('/stats', getDashboardStats);
+router.post('/broadcast', broadcastNotice);
 router.get('/students', getStudents);
 router.get('/students/:id/full', getFullStudentProfile);
 router.get('/pending-approvals', getPendingUsers);

@@ -28,9 +28,6 @@ const FacultySidebar = ({ isOpen, setIsOpen }) => {
         { icon: LayoutDashboard, label: 'Overview', path: '/faculty-dashboard' },
         { icon: Users, label: 'Mentee List', path: '/faculty-dashboard/mentorship' },
         { icon: MessageSquare, label: 'Grievance Desk', path: '/faculty-dashboard/grievances' },
-        { icon: CalendarCheck, label: 'Attendance Management', path: '/faculty-dashboard/attendance' },
-        { icon: LineChart, label: 'Academic Stats', path: '/faculty-dashboard/performance' },
-        { icon: BookOpen, label: 'Study Resources', path: '/faculty-dashboard/resources' },
         { icon: Bell, label: 'Notices', path: '/faculty-dashboard/notice' },
         { icon: User, label: 'My Profile', path: '/faculty-dashboard/profile' },
     ];
@@ -130,17 +127,17 @@ const FacultyLayout = () => {
                     </div>
 
                     <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-4 bg-white p-1.5 pr-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-lg transition-all cursor-pointer group">
-                             <div className="h-10 w-10 rounded-xl bg-[#171317] flex items-center justify-center text-white font-bold text-sm shadow-lg transition-transform group-hover:rotate-3">
-                                 {user?.name?.charAt(0) || 'F'}
-                             </div>
-                             <div>
-                                 <p className="text-sm font-bold text-slate-900 leading-none mb-1">{user?.name || 'Professor'}</p>
-                                 <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Faculty Member</p>
-                             </div>
-                             <div className="ml-4 h-8 w-8 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100 text-slate-400 group-hover:text-orange-600 transition-colors">
-                                 <Bell className="h-4 w-4" />
-                             </div>
+                        <div className="flex items-center gap-4 bg-white p-1.5 pr-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-lg transition-all cursor-pointer group">
+                            <div className="h-10 w-10 rounded-xl bg-[#171317] flex items-center justify-center text-white font-bold text-sm shadow-lg transition-transform group-hover:rotate-3">
+                                {user?.name?.charAt(0) || 'F'}
+                            </div>
+                            <div>
+                                <p className="text-sm font-bold text-slate-900 leading-none mb-1">{user?.name || 'Professor'}</p>
+                                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Faculty Member</p>
+                            </div>
+                            <div className="ml-4 h-8 w-8 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100 text-slate-400 group-hover:text-orange-600 transition-colors">
+                                <Bell className="h-4 w-4" />
+                            </div>
                         </div>
                     </div>
                 </header>

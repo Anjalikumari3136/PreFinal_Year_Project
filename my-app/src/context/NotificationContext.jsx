@@ -45,7 +45,7 @@ export const NotificationProvider = ({ children }) => {
             setNotifications(data);
             const unread = data.filter(n => {
                 const recipient = n.recipients.find(r => r.user === user._id);
-                return recipient ? !recipient.isRead : true; 
+                return recipient ? !recipient.isRead : true;
             }).length;
             setUnreadCount(unread);
         } catch (error) {

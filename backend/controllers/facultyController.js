@@ -21,12 +21,34 @@ const getFacultyDashboard = async (req, res) => {
             status: { $in: ['PENDING', 'IN_PROGRESS'] }
         }).populate('student', 'name studentId');
 
-        // 3. Get Grievance Count (Requests assigned or Exam related)
+        // 3. Get Grievance Count (Requests assigned or related to Faculty's Dept)
+        const orConditions = [{ assignedTo: facultyId }];
+        
+        const deptCategoryMap = {
+            'Examination Department': 'EXAM',
+            'Registrar / Documentation': 'REGISTRAR',
+            'Fees & Accounts Office': 'FEES',
+            'Hostel Management': 'HOSTEL',
+            'Administrative Office': 'ADMINISTRATIVE',
+            'Career & Placements': 'PLACEMENT',
+            'Central Library Services': 'LIBRARY',
+            'Sports & Athletics Bureau': 'SPORTS',
+            'Transport & Logistics': 'TRANSPORT',
+            'Office of the Dean': 'DEAN_OFFICE'
+        };
+        
+        const mappedCategory = deptCategoryMap[req.user.department];
+        if (mappedCategory) {
+            orConditions.push({ category: mappedCategory });
+        }
+
+        // Safety fallback for examination
+        if (req.user.department === 'Examination Department' || !req.user.department) {
+             orConditions.push({ category: 'EXAM' });
+        }
+
         const grievancesCount = await Request.countDocuments({
-            $or: [
-                { assignedTo: facultyId },
-                { category: 'EXAM' }
-            ],
+            $or: orConditions,
             status: { $ne: 'RESOLVED' }
         });
 
@@ -171,16 +193,41 @@ const sendNoticeToStudents = async (req, res) => {
 // @access  Private/Faculty
 const getGrievances = async (req, res) => {
     try {
+        const orConditions = [{ assignedTo: req.user._id }];
+        
+        const deptCategoryMap = {
+            'Examination Department': 'EXAM',
+            'Registrar / Documentation': 'REGISTRAR',
+            'Fees & Accounts Office': 'FEES',
+            'Hostel Management': 'HOSTEL',
+            'Administrative Office': 'ADMINISTRATIVE',
+            'Career & Placements': 'PLACEMENT',
+            'Central Library Services': 'LIBRARY',
+            'Sports & Athletics Bureau': 'SPORTS',
+            'Transport & Logistics': 'TRANSPORT',
+            'Office of the Dean': 'DEAN_OFFICE'
+        };
+        
+        const mappedCategory = deptCategoryMap[req.user.department];
+        if (mappedCategory) {
+            orConditions.push({ category: mappedCategory });
+        }
+
+        // Safety fallback
+        if (req.user.department === 'Examination Department' || !req.user.department) {
+             orConditions.push({ category: 'EXAM' });
+        }
+
         const studentRequests = await Request.find({
-            $or: [
-                { assignedTo: req.user._id },
-                { category: 'EXAM' }
-            ]
+            $or: orConditions
         }).populate('student', 'name studentId email');
 
-        const feedbacks = await Feedback.find({
-            category: 'Examination'
-        }).populate('student', 'name studentId email');
+        let feedbacks = [];
+        if (req.user.department === 'Examination Department') {
+            feedbacks = await Feedback.find({
+                category: 'Examination'
+            }).populate('student', 'name studentId email');
+        }
 
         const mappedFeedbacks = feedbacks.map(f => ({
             _id: f._id,

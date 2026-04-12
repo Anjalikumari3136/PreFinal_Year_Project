@@ -2,6 +2,8 @@ import Mentorship from '../models/Mentorship.js';
 import User from '../models/User.js';
 import { createNotification } from './notificationController.js';
 
+import sendEmail from '../utils/sendEmail.js';
+
 // @desc    Request a mentor
 // @route   POST /api/mentorship/request
 // @access  Private/Student
@@ -21,6 +23,31 @@ const createMentorshipRequest = async (req, res) => {
         });
 
         const createdMentorship = await mentorship.save();
+
+        // Notify faculty via Email
+        const faculty = await User.findById(mentorId);
+        if (faculty && faculty.email) {
+            await sendEmail({
+                email: faculty.email,
+                name: faculty.name,
+                subject: 'New Mentorship Request',
+                htmlContent: `
+                    <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                        <h2 style="color: #ea580c;">New Student Mentorship Request</h2>
+                        <p>Dear Professor <strong>${faculty.name}</strong>,</p>
+                        <p>A new student has requested you to be their Academic Mentor.</p>
+                        <div style="background: #fff7ed; padding: 15px; border-radius: 5px; margin: 15px 0; border-left: 4px solid #ea580c;">
+                            <p><strong>Student Name:</strong> ${req.user.name}</p>
+                            <p><strong>Message:</strong> "${message}"</p>
+                        </div>
+                        <p>Please log in to your <strong>Faculty Mentee Console</strong> to review and authorize this request.</p>
+                        <br/>
+                        <p>Regards,<br/>Campus Support Bureau</p>
+                    </div>
+                `
+            }).catch(err => console.log('Mentorship Email Error:', err));
+        }
+
         res.status(201).json(createdMentorship);
     } catch (error) {
         res.status(500).json({ message: error.message });

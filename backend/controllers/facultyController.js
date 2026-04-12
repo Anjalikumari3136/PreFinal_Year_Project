@@ -278,7 +278,7 @@ const resolveGrievance = async (req, res) => {
             item.resolutionNotes = response;
             await item.save();
 
-            // 📧 SEND EMAIL TO STUDENT
+            // ðŸ“§ SEND EMAIL TO STUDENT
             if (item.student && item.student.email) {
                 await sendEmail({
                     email: item.student.email,
@@ -318,4 +318,53 @@ const resolveGrievance = async (req, res) => {
     }
 };
 
-export { getFacultyDashboard, updateApprovalStatus, sendNoticeToStudents, getGrievances, getAssignedGrievances, resolveGrievance };
+export {
+    getFacultyDashboard,
+    updateApprovalStatus,
+    sendNoticeToStudents,
+    getGrievances,
+    getAssignedGrievances,
+    resolveGrievance,
+    getFacultyMentorships,
+    updateMentorshipStatusAsFaculty
+};
+
+const getFacultyMentorships = async (req, res) => {
+    try {
+        const mentorships = await Mentorship.find({ mentor: req.user._id })
+            .populate('student', 'name studentId department')
+            .sort({ createdAt: -1 });
+        res.json(mentorships);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const updateMentorshipStatusAsFaculty = async (req, res) => {
+    try {
+        const { status } = req.body;
+        const mentorship = await Mentorship.findById(req.params.id);
+        if (!mentorship) return res.status(404).json({ message: 'Mentorship not found' });
+
+        if (mentorship.mentor.toString() !== req.user._id.toString()) {
+            return res.status(401).json({ message: 'Not authorized' });
+        }
+
+        mentorship.status = status;
+        await mentorship.save();
+
+        const student = await User.findById(mentorship.student);
+        if (student && student.email) {
+            await sendEmail({
+                email: student.email,
+                name: student.name,
+                subject: `Mentorship Updated: ${status}`,
+                htmlContent: `<p>Your mentorship status is now ${status}.</p>`
+            }).catch(e => console.log(e));
+        }
+
+        res.json(mentorship);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

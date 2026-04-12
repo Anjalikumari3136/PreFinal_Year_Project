@@ -5,6 +5,7 @@ import DashboardLayout from './layouts/DashboardLayout';
 import Overview from './pages/dashboard/Overview';
 import Requests from './pages/dashboard/Requests';
 import Profile from './pages/dashboard/Profile';
+import Updates from './pages/dashboard/Updates';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
 import { Toaster } from 'react-hot-toast';
@@ -19,11 +20,13 @@ import NoticeBoard from './pages/faculty/NoticeBoard';
 import FacultyProfile from './pages/faculty/Profile';
 import FacultyMentorship from './pages/faculty/Mentorship';
 import GrievanceResolution from './pages/faculty/Grievances';
+import FacultyNotices from './pages/faculty/Notices';
 import FacultyManagement from './pages/admin/FacultyManagement';
 import FeedbackManagement from './pages/admin/FeedbackManagement';
 import Mentorship from './pages/dashboard/Mentorship';
 import MentorshipManagement from './pages/admin/MentorshipManagement';
 import RegistrationRequests from './pages/admin/RegistrationRequests';
+import NoticeCenter from './pages/admin/NoticeCenter';
 import FeaturesPage from './pages/Features';
 import AboutPage from './pages/About';
 import ContactPage from './pages/Contact';
@@ -86,7 +89,7 @@ function App() {
               <Route index element={<Overview />} />
               <Route path="requests" element={<Requests />} />
               <Route path="mentorship" element={<Mentorship />} />
-              <Route path="notifications" element={<div>Notifications Page</div>} />
+              <Route path="notifications" element={<Updates />} />
               <Route path="feedback" element={<Feedback />} />
               <Route path="profile" element={<Profile />} />
             </Route>
@@ -103,6 +106,7 @@ function App() {
               <Route path="requests" element={<AdminRequests />} />
               <Route path="feedback" element={<FeedbackManagement />} />
               <Route path="mentorship" element={<MentorshipManagement />} />
+              <Route path="notices" element={<NoticeCenter />} />
             </Route>
 
             <Route path="/faculty-dashboard" element={
@@ -112,6 +116,11 @@ function App() {
             }>
               <Route index element={<FacultyOverview />} />
               <Route path="notice" element={<NoticeBoard />} />
+              <Route path="notices" element={<FacultyNotices />} />
+              {/* <Route path="attendance" element={<Attendance />} />
+              <Route path="performance" element={<Performance />} />
+              <Route path="resources" element={<Resources />} />
+              <Route path="my-attendance" element={<div>My Personal Attendance Records</div>} /> */}
               <Route path="profile" element={<FacultyProfile />} />
               <Route path="mentorship" element={<FacultyMentorship />} />
               <Route path="grievances" element={<GrievanceResolution />} />

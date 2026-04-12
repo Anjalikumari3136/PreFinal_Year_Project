@@ -126,7 +126,7 @@ const Requests = () => {
                     <h1 className="text-4xl font-black text-slate-900 tracking-tighter leading-none mb-2">Request Hub</h1>
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest underline decoration-orange-600 decoration-2 underline-offset-4">Academic & Admin Oversight Bureau</p>
                 </div>
-                <button 
+                <button
                     onClick={() => setIsNewModalOpen(true)}
                     className="group bg-[#f4511e] text-white px-8 py-5 rounded-[1.5rem] font-black uppercase text-[10px] tracking-[0.2em] shadow-2xl shadow-orange-600/30 hover:scale-[1.03] active:scale-95 transition-all flex items-center gap-4"
                 >
@@ -223,7 +223,7 @@ const Requests = () => {
                     </table>
                 </div>
             </div>
-            
+
             <div className="bg-[#171317] rounded-[2.5rem] p-10 text-white relative overflow-hidden shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8 group">
                 <div className="absolute top-0 right-0 w-[500px] h-full bg-orange-600 rounded-full blur-[120px] -mr-48 opacity-10 group-hover:opacity-20 transition-opacity"></div>
                 <div className="relative z-10 flex gap-10 items-center">
@@ -237,8 +237,8 @@ const Requests = () => {
                     </div>
                 </div>
                 <div className="relative z-10 p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md">
-                     <p className="text-[10px] font-black text-orange-500 uppercase tracking-widest mb-1 italic">Current System Load</p>
-                     <p className="text-3xl font-black tracking-tighter">Optimized</p>
+                    <p className="text-[10px] font-black text-orange-500 uppercase tracking-widest mb-1 italic">Current System Load</p>
+                    <p className="text-3xl font-black tracking-tighter">Optimized</p>
                 </div>
             </div>
         </div>

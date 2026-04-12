@@ -217,61 +217,73 @@ const FacultyManagement = () => {
             {view === 'directory' ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in slide-in-from-bottom-2 duration-500">
                     {filteredFaculty.map((member, idx) => (
-                        <div key={member._id} className="group relative bg-white rounded-[2rem] border border-slate-200 p-6 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-300 hover:-translate-y-1 overflow-hidden">
-                          
-                            <div className="absolute -top-10 -right-10 w-32 h-32 bg-indigo-50 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
-
-                            <div className="relative">
-                                <div className="flex justify-between items-start mb-6">
-                                    <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xl font-black shadow-lg shadow-indigo-200 group-hover:rotate-6 transition-transform">
+                        <div key={member._id} className="group relative bg-white rounded-[2.5rem] border border-slate-200 hover:border-indigo-600/50 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 hover:-translate-y-2 overflow-hidden shadow-sm">
+                            {/* Accent Header */}
+                            <div className="h-2 bg-gradient-to-r from-indigo-500 via-purple-600 to-indigo-500 opacity-80"></div>
+                            
+                            <div className="p-8">
+                                <div className="flex justify-between items-start mb-8">
+                                    {/* Avatar Initials - Fixed Circle Style */}
+                                    <div className="h-16 w-16 rounded-[1.5rem] bg-indigo-600 text-white flex items-center justify-center text-2xl font-black shadow-xl shadow-indigo-600/20 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
                                         {member.name.charAt(0)}
                                     </div>
-                                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div className="flex gap-2">
                                         <button
                                             onClick={() => openEditModal(member)}
-                                            className="p-2 hover:bg-slate-100 rounded-xl text-slate-600 transition-colors"
+                                            className="p-3 bg-slate-50 hover:bg-slate-900 hover:text-white rounded-2xl text-slate-400 transition-all duration-300 shadow-inner"
                                         >
                                             <Edit className="h-4 w-4" />
                                         </button>
                                         <button
                                             onClick={() => handleDeleteFaculty(member._id)}
-                                            className="p-2 hover:bg-rose-50 rounded-xl text-rose-500 transition-colors"
+                                            className="p-3 bg-rose-50 hover:bg-rose-600 hover:text-white rounded-2xl text-rose-500 transition-all duration-300"
                                         >
                                             <Trash2 className="h-4 w-4" />
                                         </button>
                                     </div>
                                 </div>
 
-                                <div className="mb-6">
-                                    <h3 className="text-xl font-black text-slate-900 mb-1 group-hover:text-indigo-600 transition-colors">{member.name}</h3>
-                                    <p className="text-sm font-bold text-slate-500 flex items-center gap-1.5">
-                                        <Briefcase className="h-3.5 w-3.5 text-indigo-400" />
-                                        {member.designation || 'Academic Staff'}
+                                <div className="space-y-1 mb-8">
+                                    <h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase italic group-hover:text-indigo-600 transition-colors leading-none">{member.name}</h3>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] flex items-center gap-2">
+                                        <Briefcase className="h-3 w-3 text-indigo-500" />
+                                        {member.designation || 'FACULTY MEMBER'}
                                     </p>
                                 </div>
 
-                                <div className="space-y-3 mb-6">
-                                    <div className="flex items-center gap-3 text-xs font-bold text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                                        <Mail className="h-3.5 w-3.5 text-slate-400" />
+                                <div className="space-y-3 mb-8">
+                                    <div className="flex items-center gap-3 text-[11px] font-bold text-slate-600 bg-slate-50/80 p-3 rounded-2xl border border-slate-100 shadow-inner">
+                                        <Mail className="h-3.5 w-3.5 text-indigo-400" />
                                         {member.email}
                                     </div>
-                                    <div className="flex items-center gap-3 text-xs font-bold text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                                        <GraduationCap className="h-3.5 w-3.5 text-slate-400" />
-                                        {member.department || 'General Department'}
+                                    <div className="flex items-center gap-3 text-[11px] font-bold text-slate-600 bg-slate-50/80 p-3 rounded-2xl border border-slate-100 shadow-inner">
+                                        <GraduationCap className="h-3.5 w-3.5 text-indigo-400" />
+                                        {member.department || 'GENERAL STUDIES'}
                                     </div>
                                 </div>
 
-                                <div className="flex flex-wrap gap-2">
+                                <div className="flex flex-wrap gap-2 mb-8">
                                     {member.facultyRoles && member.facultyRoles.length > 0 ? (
                                         member.facultyRoles.map(role => (
-                                            <span key={role} className="px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-[10px] font-black uppercase tracking-wider border border-indigo-100 flex items-center gap-1">
-                                                <div className="w-1 h-1 rounded-full bg-indigo-400"></div>
+                                            <span key={role} className="px-3 py-1 bg-white text-indigo-600 rounded-xl text-[9px] font-black uppercase tracking-widest border border-indigo-100 shadow-sm flex items-center gap-2">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></div>
                                                 {role}
                                             </span>
                                         ))
                                     ) : (
-                                        <span className="text-[10px] text-slate-400 uppercase font-black italic">No roles assigned</span>
+                                        <span className="text-[9px] text-slate-400 uppercase font-black italic tracking-widest">No assigned roles</span>
                                     )}
+                                </div>
+
+                                <div className="flex items-center justify-between pt-6 border-t border-slate-50">
+                                    <div className={cn("px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.2em] border",
+                                        member.status === 'APPROVED' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                                        member.status === 'PENDING' ? "bg-amber-50 text-amber-600 border-amber-100" :
+                                        "bg-rose-50 text-rose-600 border-rose-100"
+                                    )}>
+                                        {member.status || 'PENDING'}
+                                    </div>
+                                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest italic">ID: {member._id.slice(-6)}</span>
                                 </div>
                             </div>
                         </div>

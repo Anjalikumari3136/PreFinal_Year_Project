@@ -22,6 +22,7 @@ import facultyRoutes from './routes/facultyRoutes.js';
 import mentorshipRoutes from './routes/mentorshipRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
+import noticeRoutes from './routes/noticeRoutes.js';
 
 // Initialize Socket.io
 initSocket(httpServer);
@@ -40,6 +41,7 @@ app.use('/api/faculty', facultyRoutes);
 app.use('/api/mentorship', mentorshipRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/notices', noticeRoutes);
 
 // Basic Route
 app.get('/', (req, res) => {

@@ -12,7 +12,8 @@ import {
     UserCheck,
     Briefcase,
     Activity,
-    ClipboardCheck
+    ClipboardCheck,
+    Bell
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -21,10 +22,11 @@ const AdminSidebar = ({ isOpen, setIsOpen }) => {
     const { logout } = useAuth();
 
     const menuItems = [
-        { icon: LayoutDashboard, label: 'Bureau Overview', path: '/admin-dashboard' },
-        { icon: GraduationCap, label: 'Student Bureau', path: '/admin-dashboard/students' },
-        { icon: Briefcase, label: 'Faculty Bureau', path: '/admin-dashboard/faculty' },
+        { icon: LayoutDashboard, label: 'Admin Dashboard', path: '/admin-dashboard' },
+        { icon: GraduationCap, label: 'Student Directory', path: '/admin-dashboard/students' },
+        { icon: Briefcase, label: 'Faculty Directory', path: '/admin-dashboard/faculty' },
         { icon: MessageSquare, label: 'Student Requests', path: '/admin-dashboard/requests' },
+        { icon: Bell, label: 'Notice Center', path: '/admin-dashboard/notices' },
         { icon: UserCheck, label: 'Access Control', path: '/admin-dashboard/approvals' },
     ];
 
@@ -51,8 +53,8 @@ const AdminSidebar = ({ isOpen, setIsOpen }) => {
                             <Shield className="h-6 w-6 text-white" />
                         </div>
                         <div className="relative z-10 leading-none">
-                            <p className="text-xl font-black text-white tracking-widest uppercase">Admin</p>
-                            <p className="text-[10px] font-black text-orange-500 uppercase tracking-widest mt-1 opacity-80 italic">Bureau Core</p>
+                            <p className="text-xl font-bold text-white tracking-widest uppercase">Admin</p>
+                            <p className="text-[10px] font-bold text-orange-500 uppercase tracking-widest mt-1 opacity-80">Support Portal</p>
                         </div>
                     </div>
                 </div>

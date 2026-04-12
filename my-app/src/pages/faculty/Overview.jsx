@@ -22,6 +22,7 @@ import { Button } from '../../components/common/Button';
 import { useAuth } from '../../context/AuthContext';
 import axios from 'axios';
 import { cn } from '../../utils/cn';
+import API_BASE_URL from '../../config/api';
 
 const FacultyOverview = () => {
     const { user } = useAuth();
@@ -34,7 +35,7 @@ const FacultyOverview = () => {
     const fetchDashboard = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data: d } = await axios.get('https://prefinal-year-project.onrender.com/api/faculty/dashboard', config);
+            const { data: d } = await axios.get(`${API_BASE_URL}/api/faculty/dashboard`, config);
             setData(d);
         } catch (error) {
             setData({

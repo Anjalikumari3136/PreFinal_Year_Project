@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Users, UserPlus, Search, Filter, Mail, Shield, UserX, UserCheck, Calendar, GraduationCap, ArrowRight, Loader2, X, AlertTriangle, FileText, CheckCircle2 } from 'lucide-react';
+import { Users, UserPlus, Search, Filter, Mail, Shield, UserX, UserCheck, Calendar, GraduationCap, ArrowRight, Loader2, X, AlertTriangle, FileText, CheckCircle2, MessageSquare, Inbox } from 'lucide-react';
 import { Button } from '../../components/common/Button';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
@@ -212,7 +212,15 @@ const StudentManagement = () => {
                         <option value="3">YEAR 3</option>
                         <option value="4">YEAR 4</option>
                     </select>
-                    <Button><UserPlus className="h-4 w-4 mr-2" /> Enroll Student</Button>
+                    <select
+                        className="bg-slate-50 border border-slate-200 px-4 py-2 rounded-xl text-xs font-black font-serif focus:ring-2 focus:ring-indigo-500/20 outline-none"
+                        onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+                    >
+                        <option value="">ALL STATUS</option>
+                        <option value="active">ACTIVE ONLY</option>
+                        <option value="inactive">SUSPENDED ONLY</option>
+                    </select>
+                    <Button variant="primary" className="shadow-lg shadow-indigo-500/20"><UserPlus className="h-4 w-4 mr-2" /> Enroll Student</Button>
                 </div>
             </div>
 

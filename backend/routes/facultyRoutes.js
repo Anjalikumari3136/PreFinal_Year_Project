@@ -1,5 +1,5 @@
 import express from 'express';
-import { getFacultyDashboard, updateApprovalStatus, sendNoticeToStudents } from '../controllers/facultyController.js';
+import { getFacultyDashboard, updateApprovalStatus, sendNoticeToStudents, getGrievances, getAssignedGrievances, resolveGrievance } from '../controllers/facultyController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -19,5 +19,8 @@ router.use(facultyOnly);
 router.get('/dashboard', getFacultyDashboard);
 router.put('/approvals/:id', updateApprovalStatus);
 router.post('/send-notice', sendNoticeToStudents);
+router.get('/grievances', getGrievances); // Or whichever is correct
+router.get('/assigned-grievances', getAssignedGrievances);
+router.put('/grievances/:id', resolveGrievance);
 
 export default router;

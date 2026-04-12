@@ -1,0 +1,41 @@
+[
+  {
+    "status": "PENDING",
+    "_id": "69d23d30a54fa66f14c2f554",
+    "name": "Rishav Kumar",
+    "email": "rishavraj33372@gmail.com",
+    "password": "$2b$10$zw7BO1MuwJUdsGzFK6RUK.aQxlRWrZxc40VA2XVxYDzt1/czMr/HG",
+    "role": "FACULTY",
+    "adminRole": "Staff",
+    "department": "Computer Science",
+    "studentId": "BR0155",
+    "isActive": true,
+    "facultyRoles": [],
+    "workloadScore": 0,
+    "isVerified": true,
+    "createdAt": "2026-04-05T10:45:04.095Z",
+    "updatedAt": "2026-04-05T10:45:45.366Z",
+    "__v": 0
+  },
+  {
+    "_id": "69d2499d6141b6b70d98fa72",
+    "name": "Dr Pankaj Agarwal ",
+    "email": "er.ak3136@gmail.com",
+    "password": "$2b$10$HkcH4iWQkt.MD/vumX50S.x/FM7BzWrdQR85DBbH/bFRFfwDnY6WC",
+    "role": "FACULTY",
+    "adminRole": "Staff",
+    "department": "DEAN_OFFICE",
+    "studentId": "HR5505",
+    "isActive": true,
+    "status": "APPROVED",
+    "facultyRoles": [
+      "Request Approver"
+    ],
+    "workloadScore": 0,
+    "isVerified": true,
+    "createdAt": "2026-04-05T11:38:05.229Z",
+    "updatedAt": "2026-04-05T11:45:16.332Z",
+    "__v": 1,
+    "designation": "Professor"
+  }
+]

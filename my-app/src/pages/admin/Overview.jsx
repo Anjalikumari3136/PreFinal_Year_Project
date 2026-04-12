@@ -55,7 +55,7 @@ const AdminOverview = () => {
 
     useEffect(() => { fetchData(); }, []);
 
-    if (loading) return <div className="h-[60vh] flex items-center justify-center font-black text-orange-600 animate-pulse uppercase tracking-[0.2em] italic">Initializing Bureau Systems...</div>;
+    if (loading) return <div className="h-[60vh] flex items-center justify-center font-bold text-orange-600 animate-pulse uppercase tracking-[0.2em]">Initializing Portal Systems...</div>;
 
     const quickActions = [
         { title: 'Enroll Student', icon: UserPlus, color: 'text-emerald-500', bg: 'bg-emerald-50', path: '/admin-dashboard/students' },
@@ -66,9 +66,9 @@ const AdminOverview = () => {
 
     const metrics = [
         { label: 'Total Enrolled Students', value: stats.students, icon: GraduationCap, color: 'text-orange-600' },
-        { label: 'Active Faculty Personnel', value: stats.faculty, icon: Users, color: 'text-blue-600' },
-        { label: 'Strategic Requests', value: stats.requests, icon: Activity, color: 'text-emerald-600' },
-        { label: 'High-Risk Candidates', value: stats.feedback || '0', icon: Shield, color: 'text-rose-600' },
+        { label: 'Active Faculty Members', value: stats.faculty, icon: Users, color: 'text-blue-600' },
+        { label: 'Total Portal Requests', value: stats.requests, icon: Activity, color: 'text-emerald-600' },
+        { label: 'Pending Feedback', value: stats.feedback || '0', icon: Shield, color: 'text-rose-600' },
     ];
 
     return (
@@ -82,13 +82,13 @@ const AdminOverview = () => {
                 <div className="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-10">
                     <div className="space-y-4 text-center lg:text-left">
                         <div className="flex items-center justify-center lg:justify-start gap-4">
-                            <span className="px-3 py-1 bg-orange-600 rounded-full text-[8px] font-black uppercase tracking-[0.2em] shadow-lg shadow-orange-600/20">
-                                Bureau Alpha-1
+                            <span className="px-3 py-1 bg-orange-600 rounded-full text-[8px] font-bold uppercase tracking-[0.2em] shadow-lg shadow-orange-600/20">
+                                Support Central
                             </span>
                             <span className="text-slate-500 font-bold text-[9px] uppercase tracking-widest">{new Date().toDateString()}</span>
                         </div>
-                        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight leading-none">
-                            Namaste Commander,<br />
+                        <h1 className="text-3xl md:text-4xl font-bold tracking-tight leading-none">
+                            Namaste Admin,<br />
                             <span className="text-orange-500">{user?.name || 'Director'}</span> 👋
                         </h1>
                         <p className="text-slate-400 text-[10px] font-semibold max-w-lg leading-relaxed uppercase tracking-wider opacity-80 decoration-orange-600/50 underline underline-offset-8 decoration-2">
@@ -139,8 +139,8 @@ const AdminOverview = () => {
                         <div className="relative z-10">
                             <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2">{m.label}</p>
                             <div className="flex items-baseline gap-2">
-                                <h3 className="text-3xl font-extrabold text-slate-900 tracking-tight">{m.value}</h3>
-                                <div className="text-[8px] font-black text-emerald-500 tracking-widest uppercase">+8.2%</div>
+                                <h3 className="text-3xl font-bold text-slate-900 tracking-tight">{m.value}</h3>
+                                <div className="text-[8px] font-bold text-emerald-500 tracking-widest uppercase">+8.2%</div>
                             </div>
                         </div>
                         <div className={cn("absolute bottom-0 right-0 p-6 opacity-[0.03] transition-transform group-hover:scale-125", m.color)}>
@@ -156,11 +156,11 @@ const AdminOverview = () => {
                 <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group">
                     <div className="flex items-center justify-between mb-8">
                         <div>
-                             <h3 className="text-xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3 uppercase">
+                             <h3 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-3 uppercase">
                                 <Fingerprint className="h-6 w-6 text-orange-600" />
-                                Recent Authorizations
+                                Recent Approvals
                              </h3>
-                             <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1 opacity-70">Security & Permission Desk</p>
+                             <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1 opacity-70">Access Management Hub</p>
                         </div>
                         <Button variant="ghost" onClick={() => navigate('/admin-dashboard/approvals')} className="h-10 w-10 p-0 rounded-xl hover:bg-slate-900 hover:text-white transition-all">
                             <ChevronRight className="h-5 w-5" />
@@ -192,9 +192,9 @@ const AdminOverview = () => {
                         <div>
                             <h3 className="text-2xl font-bold tracking-tighter uppercase mb-2 flex items-center gap-3">
                                 <Activity className="h-6 w-6 text-orange-600" />
-                                Protocol Logs
+                                Activity Logs
                             </h3>
-                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em] opacity-80 italic underline decoration-orange-600 decoration-2 underline-offset-8">Terminal Activity Stream</p>
+                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em] opacity-80 underline decoration-orange-600 decoration-2 underline-offset-8">Terminal Activity Stream</p>
                         </div>
                         
                         <div className="space-y-6">

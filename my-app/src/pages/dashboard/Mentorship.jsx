@@ -143,20 +143,10 @@ const Mentorship = () => {
                                         <div className="absolute top-0 right-0 w-32 h-32 bg-orange-600/30 rounded-full blur-[50px] -mr-16 opacity-50"></div>
                                         <div className="absolute inset-0 bg-gradient-to-br from-orange-600/10 to-transparent"></div>
                                     </div>
-                                    <div className="px-8 pb-8 pt-0 relative">
-                                        <div className="absolute -top-14 left-8">
-                                            {faculty.profileDetails?.avatar ? (
-                                                <img src={faculty.profileDetails.avatar} alt={faculty.name} className="h-24 w-24 rounded-3xl object-cover border-[6px] border-white shadow-2xl" />
-                                            ) : (
-                                                <div className="h-24 w-24 rounded-3xl bg-[#f4511e] flex items-center justify-center border-[6px] border-white shadow-2xl text-3xl font-black text-white">
-                                                    {faculty.name.charAt(0)}
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        <div className="mt-14 space-y-5">
+                                    <div className="px-8 pb-10 relative">
+                                        <div className="mt-8 space-y-5">
                                             <div>
-                                                <h3 className="text-2xl font-black text-slate-900 tracking-tight leading-none mb-2 truncate group-hover:text-orange-600 transition-colors italic uppercase">{faculty.name}</h3>
+                                                <h3 className="text-3xl font-black text-slate-900 tracking-tighter leading-none mb-3 group-hover:text-orange-600 transition-colors italic uppercase">{faculty.name}</h3>
                                                 <p className="text-orange-600 font-black text-[10px] uppercase tracking-widest">{faculty.designation || 'Academic Mentor'}</p>
                                                 <div className="flex items-center gap-2 mt-3 text-slate-400 text-[10px] font-bold uppercase tracking-tighter">
                                                     <MapPin className="h-3 w-3" />

@@ -4,6 +4,8 @@ import Feedback from '../models/Feedback.js';
 import AuditLog from '../models/AuditLog.js';
 import Mentorship from '../models/Mentorship.js';
 import Notification from '../models/Notification.js';
+import sendEmail from '../utils/sendEmail.js';
+import Notice from '../models/Notice.js';
 
 // Helper to log actions
 const logAction = async (action, adminId, targetId, details = '') => {
@@ -50,10 +52,11 @@ const getStudents = async (req, res) => {
         const { department, year, semester, status, limit } = req.query;
         let query = { role: 'STUDENT' };
 
-        if (department) query.department = department;
+        if (department) query.department = { $regex: department, $options: 'i' };
         if (year) query.year = year;
         if (semester) query.semester = semester;
-        if (status) query.isActive = status === 'active';
+        if (status === 'active') query.isActive = true;
+        if (status === 'inactive') query.isActive = false;
 
         let studentsQuery = User.find(query)
             .select('-password')
@@ -166,6 +169,8 @@ const addFaculty = async (req, res) => {
             role: 'FACULTY',
             department,
             designation,
+            status: 'APPROVED',
+            isVerified: true,
             facultyRoles: facultyRoles || []
         });
 
@@ -285,23 +290,94 @@ const assignMentor = async (req, res) => {
     } catch (error) { res.status(500).json({ message: error.message }); }
 };
 
-// @desc    Broadcast a notice to all users or specific roles
+// @desc    Broadcast a notice to students, faculty or both
 // @route   POST /api/admin/broadcast
 const broadcastNotice = async (req, res) => {
     try {
-        const { title, content, type, priority, targetAudience } = req.body;
+        const { title, message, audience, content, targetAudience } = req.body; 
 
-        const notification = await Notification.create({
-            title,
-            message: content,
+        // Compatibility for both friend's and user's payload
+        const finalTitle = title;
+        const finalMessage = message || content;
+        const finalAudience = audience || targetAudience || 'BOTH';
+
+        let rolesToTarget = [];
+        if (finalAudience === 'BOTH' || finalAudience === 'ALL') rolesToTarget = ['STUDENT', 'FACULTY'];
+        else rolesToTarget = [finalAudience];
+
+        // Fetch target users
+        const users = await User.find({ role: { $in: rolesToTarget } }).select('email name');
+
+        if (users.length === 0) {
+            return res.status(404).json({ message: 'No recipients found for the selected audience.' });
+        }
+
+        // 📧 SEND BATCH EMAILS (Using Promise.all for speed)
+        const emailPromises = users.map(u => 
+            sendEmail({
+                email: u.email,
+                name: u.name,
+                subject: `[CAMPUS NOTICE] ${finalTitle}`,
+                htmlContent: `
+                    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 25px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #f8fafc;">
+                        <h1 style="color: #1e293b; font-size: 20px; border-bottom: 2px solid #ea580c; padding-bottom: 10px; margin-bottom: 20px;">Institutional Notice</h1>
+                        <h2 style="color: #ea580c; font-size: 18px; margin-bottom: 15px;">${finalTitle}</h2>
+                        <p style="color: #475569; line-height: 1.6; font-size: 14px;">Hello <strong>${u.name}</strong>,</p>
+                        <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1; margin: 15px 0;">
+                            <p style="color: #0f172a; margin: 0;">${finalMessage}</p>
+                        </div>
+                        <p style="font-size: 11px; color: #94a3b8; margin-top: 30px;">This is an officially broadcasted notice from the Campus Administration. Please check the UniSupport portal for more details.</p>
+                        <br/>
+                        <p style="font-size: 12px; font-weight: bold; color: #1e293b;">Regards,<br/>Campus Administration Bureau</p>
+                    </div>
+                `
+            })
+        );
+
+        await Promise.all(emailPromises);
+
+        // 💾 SAVE TO DB FOR DASHBOARD DISPLAY
+        await Notice.create({
+            title: finalTitle,
+            message: finalMessage,
+            audience: finalAudience,
+            admin: req.user._id
+        });
+
+        // Also save to Notification to satisfy upstream changes
+        await Notification.create({
+            title: finalTitle,
+            message: finalMessage,
             sender: req.user._id,
-            targetAudience: targetAudience || 'ALL',
+            targetAudience: finalAudience,
             isGeneral: true
         });
 
-        await logAction('BROADCAST_NOTICE', req.user._id, null, `Broadcasted: ${title}`);
+        await logAction('BROADCAST_NOTICE', req.user._id, null, `Broadcast: ${finalTitle} to ${finalAudience}`);
 
-        res.status(201).json(notification);
+        res.json({ message: `Successfully broadcasted to ${users.length} recipients.` });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Get notices for the current user's role
+// @route   GET /api/admin/notices (also usable by common users)
+const getNotices = async (req, res) => {
+    try {
+        const userRole = req.user.role; // STUDENT, FACULTY, ADMIN
+        
+        let query = { audience: 'BOTH' };
+        if (userRole === 'STUDENT') query = { audience: { $in: ['BOTH', 'STUDENT'] } };
+        if (userRole === 'FACULTY') query = { audience: { $in: ['BOTH', 'FACULTY'] } };
+        if (userRole === 'ADMIN') query = {};
+
+        const notices = await Notice.find(query)
+            .sort({ createdAt: -1 })
+            .limit(20)
+            .populate('admin', 'name');
+
+        res.json(notices);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -321,5 +397,6 @@ export {
     addFaculty,
     updateFaculty,
     deleteFaculty,
-    broadcastNotice
+    broadcastNotice,
+    getNotices
 };

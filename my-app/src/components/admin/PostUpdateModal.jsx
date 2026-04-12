@@ -5,6 +5,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
 import { cn } from '../../utils/cn';
+import API_BASE_URL from '../../config/api';
 
 const PostUpdateModal = ({ isOpen, onClose }) => {
     const { user } = useAuth();
@@ -35,8 +36,7 @@ const PostUpdateModal = ({ isOpen, onClose }) => {
             };
 
             // Note: This endpoint should be added to backend
-            await axios.post('https://prefinal-year-project.onrender.com/api/admin/broadcast', formData, config);
-
+            await axios.post(`${API_BASE_URL}/api/admin/broadcast`, formData, config);
             toast.success('Broadcast sent to all students! 📢');
             onClose();
         } catch (error) {

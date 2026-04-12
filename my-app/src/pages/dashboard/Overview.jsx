@@ -98,10 +98,10 @@ const Overview = () => {
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-            
+
             <div className="relative bg-gradient-to-r from-[#171317] to-[#2d1b18] rounded-[1.5rem] p-6 md:p-8 text-white overflow-hidden shadow-2xl group">
                 <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-orange-600 rounded-full -mr-24 -mt-24 blur-[80px] opacity-20 group-hover:opacity-30 transition-opacity"></div>
-                
+
                 <div className="relative z-10 flex flex-col xl:flex-row xl:items-center justify-between gap-10">
                     <div className="space-y-4">
                         <div className="flex items-center gap-3">
@@ -170,7 +170,7 @@ const Overview = () => {
                             <h2 className="text-3xl md:text-4xl font-black tracking-tight leading-none uppercase">Success! Session Approved.</h2>
                             <p className="text-orange-50 font-medium max-w-xl text-sm leading-relaxed">Connect with your mentor to accelerate your growth and academic journey.</p>
                         </div>
-                        <Button 
+                        <Button
                             onClick={() => navigate('/dashboard/mentorship')}
                             className="bg-[#171317] text-white hover:bg-black px-10 py-6 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-2xl active:scale-95 transition-all outline-none border-none"
                         >
@@ -213,9 +213,9 @@ const Overview = () => {
                                         <span className={cn(
                                             "px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border",
                                             ['RESOLVED', 'APPROVED', 'COMPLETED'].includes(req.status) ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
-                                            req.status === 'REJECTED' ? 'bg-red-50 text-red-600 border-red-100' :
-                                            ['SCHEDULED', 'IN_PROGRESS'].includes(req.status) ? 'bg-orange-50 text-orange-600 border-orange-100 shadow-sm' :
-                                            'bg-amber-50 text-amber-600 border-amber-100'
+                                                req.status === 'REJECTED' ? 'bg-red-50 text-red-600 border-red-100' :
+                                                    ['SCHEDULED', 'IN_PROGRESS'].includes(req.status) ? 'bg-orange-50 text-orange-600 border-orange-100 shadow-sm' :
+                                                        'bg-amber-50 text-amber-600 border-amber-100'
                                         )}>
                                             {req.status.replace('_', ' ')}
                                         </span>
@@ -242,7 +242,7 @@ const Overview = () => {
                             Guardian Mentor
                         </h3>
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-3 mb-8 underline decoration-orange-600 decoration-2">Academic Advisory Bureau</p>
-                        
+
                         <div className="flex items-center gap-6 p-6 bg-slate-50/50 rounded-[2rem] border border-slate-100 mb-8 mt-6">
                             <div className="h-16 w-16 rounded-2xl bg-[#171317] flex items-center justify-center text-white font-black text-2xl shadow-xl">
                                 {assignedMentor?.name?.charAt(0) || 'M'}
@@ -305,11 +305,11 @@ const Overview = () => {
 };
 
 const FileText = ({ className }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M13 13H8"/><path d="M13 17H8"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8" /><path d="M13 13H8" /><path d="M13 17H8" /></svg>
 );
 
 const Users = ({ className }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
 );
 
 export default Overview;

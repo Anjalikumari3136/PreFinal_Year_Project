@@ -38,7 +38,7 @@ const updateRequestStatus = async (req, res) => {
                 sender: req.user._id,
                 isGeneral: false
             });
-            
+
             // Also send email notification
             import('../models/User.js').then(async (userModule) => {
                 const User = userModule.default;

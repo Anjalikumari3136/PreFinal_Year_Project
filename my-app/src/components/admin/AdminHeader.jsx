@@ -16,8 +16,8 @@ const AdminHeader = ({ setSidebarOpen }) => {
                 </button>
                 
                 <div className="hidden md:block">
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight leading-none uppercase italic">Governance Bureau</h1>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2 underline decoration-orange-600 decoration-2 underline-offset-4">Strategic Oversight Terminal</p>
+                    <h1 className="text-3xl font-bold text-slate-900 tracking-tight leading-none">UniSupport Admin</h1>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2 underline decoration-orange-600 decoration-2 underline-offset-4">Central Management Portal</p>
                 </div>
             </div>
 

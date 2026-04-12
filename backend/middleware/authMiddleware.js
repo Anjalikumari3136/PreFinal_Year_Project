@@ -40,4 +40,13 @@ const admin = (req, res, next) => {
     }
 };
 
-export { protect, admin };
+const facultyOrAdmin = (req, res, next) => {
+    if (req.user && (req.user.role === 'ADMIN' || req.user.role === 'FACULTY')) {
+        next();
+    } else {
+        res.status(401);
+        res.json({ message: 'Not authorized as Faculty or Admin' });
+    }
+};
+
+export { protect, admin, facultyOrAdmin };

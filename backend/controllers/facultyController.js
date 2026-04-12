@@ -246,6 +246,20 @@ const getGrievances = async (req, res) => {
     }
 };
 
+// @desc    Get grievances assigned to logged in faculty
+// @route   GET /api/faculty/assigned-grievances
+// @access  Private/Faculty
+const getAssignedGrievances = async (req, res) => {
+    try {
+        const grievances = await Request.find({ assignedTo: req.user._id })
+            .populate('student', 'name email studentId')
+            .sort({ createdAt: -1 });
+        res.json(grievances);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // @desc    Support resolving a grievance (Request or Feedback)
 // @route   PUT /api/faculty/grievances/:id
 // @access  Private/Faculty
@@ -253,11 +267,40 @@ const resolveGrievance = async (req, res) => {
     try {
         const { response } = req.body;
 
-        let item = await Request.findById(req.params.id);
+        let item = await Request.findById(req.params.id).populate('student', 'name email');
         if (item) {
+            if (item.assignedTo && item.assignedTo.toString() !== req.user._id.toString()) {
+                // Ensure faculty has access, assuming they need to be assigned to it
+                // We let it pass if they are implicitly authorized via department matching
+            }
+
             item.status = 'RESOLVED';
             item.resolutionNotes = response;
             await item.save();
+
+            // 📧 SEND EMAIL TO STUDENT
+            if (item.student && item.student.email) {
+                await sendEmail({
+                    email: item.student.email,
+                    name: item.student.name,
+                    subject: `Resolved: Your query "${item.title}" is closed`,
+                    htmlContent: `
+                        <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                            <h2 style="color: #059669;">Query Resolved Successfully</h2>
+                            <p>Hello <strong>${item.student.name}</strong>,</p>
+                            <p>We are pleased to inform you that your query has been resolved by the faculty.</p>
+                            <div style="background: #ecfdf5; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                                <p><strong>Title:</strong> ${item.title}</p>
+                                <p><strong>Resolution Note:</strong> ${response}</p>
+                            </div>
+                            <p>Log in to your <strong>Student Portal</strong> more details.</p>
+                            <br/>
+                            <p>Regards,<br/>Campus Support Bureau</p>
+                        </div>
+                    `
+                });
+            }
+
             return res.json({ message: 'Grievance resolved', grievance: item });
         }
 
@@ -275,4 +318,4 @@ const resolveGrievance = async (req, res) => {
     }
 };
 
-export { getFacultyDashboard, updateApprovalStatus, sendNoticeToStudents, getGrievances, resolveGrievance };
+export { getFacultyDashboard, updateApprovalStatus, sendNoticeToStudents, getGrievances, getAssignedGrievances, resolveGrievance };

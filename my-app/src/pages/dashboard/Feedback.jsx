@@ -17,6 +17,7 @@ import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { cn } from '../../utils/cn';
 import toast from 'react-hot-toast';
+import API_BASE_URL from '../../config/api';
 
 const Feedback = () => {
     const { user } = useAuth();
@@ -31,7 +32,7 @@ const Feedback = () => {
         setLoading(true);
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get('https://prefinal-year-project.onrender.com/api/feedback', config);
+            const { data } = await axios.get(`${API_BASE_URL}/api/feedback`, config);
             setFeedbacks(data);
         } catch (error) { toast.error('Failed to load feedback'); }
         finally { setLoading(false); }
@@ -44,7 +45,7 @@ const Feedback = () => {
         setSubmitting(true);
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.post('https://prefinal-year-project.onrender.com/api/feedback', formData, config);
+            await axios.post(`${API_BASE_URL}/api/feedback`, formData, config);
             toast.success('Grievance logged successfully');
             setShowForm(false);
             setFormData({ title: '', description: '', category: 'Other' });

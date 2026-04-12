@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { 
-    Search, 
-    Filter, 
-    MessageCircle, 
-    CheckCircle, 
-    XCircle, 
-    Clock, 
-    X, 
-    AlertCircle, 
-    UserPlus, 
+import {
+    Search,
+    Filter,
+    MessageCircle,
+    CheckCircle,
+    XCircle,
+    Clock,
+    X,
+    AlertCircle,
+    UserPlus,
     ShieldPlus,
     FileText,
     ArrowRight,
@@ -194,28 +194,36 @@ const AdminRequests = () => {
                         </div>
 
                         <div className="space-y-6 pt-2">
-                            <div className="p-8 bg-violet-50/50 rounded-[2.5rem] border border-violet-100 shadow-sm">
-                                <h3 className="text-[10px] font-black text-violet-700 uppercase tracking-widest mb-6 flex items-center gap-3">
-                                    <div className="h-8 w-8 rounded-xl bg-violet-100 flex items-center justify-center"><UserPlus className="h-4 w-4" /></div>
-                                    Delegate to Faculty / Expert
-                                </h3>
-                                <div className="flex gap-3">
-                                    <select
-                                        className="flex-1 p-5 bg-white border border-violet-200 rounded-2xl text-xs font-black uppercase tracking-widest outline-none focus:ring-4 focus:ring-violet-500/5 transition-all"
-                                        value={assigningTo}
-                                        onChange={(e) => setAssigningTo(e.target.value)}
-                                    >
-                                        <option value="">-- Choose Reviewer --</option>
-                                        {faculty.map(f => (
-                                            <option key={f._id} value={f._id}>{f.name} ({f.department})</option>
-                                        ))}
-                                    </select>
-                                    <Button className="px-8 bg-violet-600 hover:bg-violet-700 rounded-2xl text-[10px] font-black uppercase tracking-widest h-auto" onClick={() => handleResolve('IN_PROGRESS')} disabled={!assigningTo || resolving}>
-                                        Assign
-                                    </Button>
+                            {selectedRequest.category === 'DEAN_OFFICE' ? (
+                                <div className="p-8 bg-orange-50/50 rounded-[2.5rem] border border-orange-100 shadow-sm mb-6 text-center">
+                                    <ShieldPlus className="h-8 w-8 text-orange-500 mx-auto mb-2 opacity-80" />
+                                    <p className="text-[10px] font-black text-orange-700 uppercase tracking-widest">Sent Directly to Dean's Portal</p>
+                                    <p className="text-xs font-bold text-orange-600/70 mt-1">Admin reassignment is restricted for this category.</p>
                                 </div>
-                            </div>
-                            
+                            ) : (
+                                <div className="p-8 bg-violet-50/50 rounded-[2.5rem] border border-violet-100 shadow-sm mb-6">
+                                    <h3 className="text-[10px] font-black text-violet-700 uppercase tracking-widest mb-6 flex items-center gap-3">
+                                        <div className="h-8 w-8 rounded-xl bg-violet-100 flex items-center justify-center"><UserPlus className="h-4 w-4" /></div>
+                                        Delegate to Faculty / Expert
+                                    </h3>
+                                    <div className="flex gap-3">
+                                        <select
+                                            className="flex-1 p-5 bg-white border border-violet-200 rounded-2xl text-xs font-black uppercase tracking-widest outline-none focus:ring-4 focus:ring-violet-500/5 transition-all"
+                                            value={assigningTo}
+                                            onChange={(e) => setAssigningTo(e.target.value)}
+                                        >
+                                            <option value="">-- Choose Reviewer --</option>
+                                            {faculty.map(f => (
+                                                <option key={f._id} value={f._id}>{f.name} ({f.department})</option>
+                                            ))}
+                                        </select>
+                                        <Button className="px-8 bg-violet-600 hover:bg-violet-700 rounded-2xl text-[10px] font-black uppercase tracking-widest h-auto" onClick={() => handleResolve('IN_PROGRESS')} disabled={!assigningTo || resolving}>
+                                            Assign
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
+
                             <div>
                                 <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 ml-1">Internal Remarks</h3>
                                 <textarea

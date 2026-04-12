@@ -3,6 +3,7 @@ import { io } from 'socket.io-client';
 import { useAuth } from './AuthContext';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import API_BASE_URL from '../config/api';
 
 const NotificationContext = createContext(null);
 
@@ -14,7 +15,7 @@ export const NotificationProvider = ({ children }) => {
 
     useEffect(() => {
         if (user) {
-            const newSocket = io('https://prefinal-year-project.onrender.com');
+            const newSocket = io(API_BASE_URL);
             setSocket(newSocket);
 
             newSocket.emit('join', user._id);
@@ -41,7 +42,7 @@ export const NotificationProvider = ({ children }) => {
                     Authorization: `Bearer ${user.token}`,
                 },
             };
-            const { data } = await axios.get('https://prefinal-year-project.onrender.com/api/notifications', config);
+            const { data } = await axios.get(`${API_BASE_URL}/api/notifications`, config);
             setNotifications(data);
             const unread = data.filter(n => {
                 const recipient = n.recipients.find(r => r.user === user._id);
@@ -60,7 +61,7 @@ export const NotificationProvider = ({ children }) => {
                     Authorization: `Bearer ${user.token}`,
                 },
             };
-            await axios.put(`https://prefinal-year-project.onrender.com/api/notifications/${notificationId}/read`, {}, config);
+            await axios.put(`${API_BASE_URL}/api/notifications/${notificationId}/read`, {}, config);
 
             setNotifications(prev => prev.map(n =>
                 n._id === notificationId ? { ...n, recipients: n.recipients.map(r => r.user === user._id ? { ...r, isRead: true } : r) } : n

@@ -26,9 +26,9 @@ const FacultySidebar = ({ isOpen, setIsOpen }) => {
 
     const menuItems = [
         { icon: LayoutDashboard, label: 'Overview', path: '/faculty-dashboard' },
-        { icon: Users, label: 'Mentee List', path: '/faculty-dashboard/mentorship' },
         { icon: MessageSquare, label: 'Grievance Desk', path: '/faculty-dashboard/grievances' },
         { icon: Bell, label: 'Notices', path: '/faculty-dashboard/notice' },
+        { icon: Users, label: 'Mentee List', path: '/faculty-dashboard/mentorship' },
         { icon: User, label: 'My Profile', path: '/faculty-dashboard/profile' },
     ];
 
